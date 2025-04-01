@@ -13,20 +13,18 @@ import BaseService from '@base-inherit/base.service';
 import CustomLoggerService from '@lazy-module/logger/logger.service';
 import {
   BadRequestException,
-  ConsoleLogger,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 
+import S3Service from '@lazy-module/s3/s3.service';
+import AWS from 'aws-sdk';
+import { MongoClient } from 'mongodb';
+import * as stream from 'stream';
 import { backupDataConstants } from './backup-data.constants';
 import BackupDataRepository from './backup-data.repository';
 import { BackupDataDocument } from './schemas/backup-data.schema';
-import S3Service from '@lazy-module/s3/s3.service';
 var JSONStream = require('JSONStream');
-import * as stream from 'stream';
-import { MongoClient } from 'mongodb';
-import AWS from 'aws-sdk';
-
 
 @Injectable()
 export default class BackupDataService extends BaseService<BackupDataDocument> {
@@ -41,7 +39,7 @@ export default class BackupDataService extends BaseService<BackupDataDocument> {
   constructor(
     readonly logger: CustomLoggerService,
     readonly backupDataRepository: BackupDataRepository,
-    private s3Service: S3Service
+    private s3Service: S3Service,
   ) {
     super(logger, backupDataRepository);
   }
@@ -287,7 +285,7 @@ export default class BackupDataService extends BaseService<BackupDataDocument> {
     const s3 = new AWS.S3({
       accessKeyId: process.env.S3_ACCESS_KEY_ID,
       secretAccessKey: process.env.S3_ACCESS_KEY_SECRET,
-      endpoint: process.env.S3_ENDPOINT
+      endpoint: process.env.S3_ENDPOINT,
     });
 
     const uploadStream = (s3: AWS.S3, Bucket: string, Key: string) => {
@@ -329,10 +327,16 @@ export default class BackupDataService extends BaseService<BackupDataDocument> {
           for (let i = 0; i < response.length; i++) {
             paths.push(response[i].Location);
           }
-          await this.backupDataRepository.create({ name: this.currentTime, paths: paths });
+          await this.backupDataRepository.create({
+            name: this.currentTime,
+            paths: paths,
+          });
         }
         this.deleteOldFolder();
-        this.logger.log('Backup SUCCESS', `Backup is successfull at ${this.currentTime}`);
+        this.logger.log(
+          'Backup SUCCESS',
+          `Backup is successfull at ${this.currentTime}`,
+        );
         return { status: true };
       })
       .catch((error) => {
@@ -351,7 +355,7 @@ export default class BackupDataService extends BaseService<BackupDataDocument> {
     const listData = await this.s3Service?.getListFileFromS3(bucket, prefix);
 
     const currentDate = new Date();
-    const thirtyDaysInMilliseconds = 30 * 24 * 60 * 60 * 1000; // 30 ngày 
+    const thirtyDaysInMilliseconds = 30 * 24 * 60 * 60 * 1000; // 30 ngày
     const promiseDeleteFileOlderThan1Days: any = [];
 
     if (listData) {
@@ -360,15 +364,26 @@ export default class BackupDataService extends BaseService<BackupDataDocument> {
 
         const folderTimestamp = Date.parse(folderName); // Chuyển đổi tên folder thành timestamp
 
-        if (currentDate.getTime() - folderTimestamp >= thirtyDaysInMilliseconds) {
-          const files = await this.s3Service?.getListFileFromS3(bucket, `${prefix}${folderName}/`);
+        if (
+          currentDate.getTime() - folderTimestamp >=
+          thirtyDaysInMilliseconds
+        ) {
+          const files = await this.s3Service?.getListFileFromS3(
+            bucket,
+            `${prefix}${folderName}/`,
+          );
 
           //set value delete
           this.backupDataRepository.deleteManyHard({ name: folderName });
 
           if (files) {
             for (let i = 0; i < files.Contents.length; i += 1) {
-              promiseDeleteFileOlderThan1Days.push(this.s3Service.deleteFileFromS3(files.Contents[i].Key.split('/').pop(), `backup/${folderName}`));
+              promiseDeleteFileOlderThan1Days.push(
+                this.s3Service.deleteFileFromS3(
+                  files.Contents[i].Key.split('/').pop(),
+                  `backup/${folderName}`,
+                ),
+              );
             }
           }
         }
@@ -378,5 +393,4 @@ export default class BackupDataService extends BaseService<BackupDataDocument> {
       }
     }
   }
-
 }

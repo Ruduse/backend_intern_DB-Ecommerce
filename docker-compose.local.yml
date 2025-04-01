@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 
 services:
   basenestjsnginx:
@@ -16,4 +16,4 @@ services:
       - ./public:/home/app/public
       - /home/app/node_modules
     ports:
-      - "0.0.0.0:3000:3000"
+      - '0.0.0.0:3000:3000'

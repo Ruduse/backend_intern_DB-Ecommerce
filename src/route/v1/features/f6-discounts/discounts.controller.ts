@@ -17,9 +17,9 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import ParseObjectIdPipe from '@pipe/parse-object-id.pipe';
 import { Types } from 'mongoose';
+import DiscountsService from './discounts.service';
 import CreateDiscountsDto from './dto/create-discounts.dto';
 import UpdateDiscountsDto from './dto/update-discounts.dto';
-import DiscountsService from './discounts.service';
 
 @ApiTags('Discounts')
 @UseInterceptors(WrapResponseInterceptor)

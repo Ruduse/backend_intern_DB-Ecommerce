@@ -1,10 +1,10 @@
 // registers aliases, DON'T REMOVE THIS LINE!
+import UserService from '@authorization/a1-user/user.service';
 import GroupDetailService from '@authorization/a6-group-detail/group-detail.service';
 import GroupApiService from '@authorization/a7-group-api/group-api.service';
 import commonConstants from '@constant/common.constants';
 import ValidationExceptions from '@exception/validation.exceptions';
 import AllExceptionsFilter from '@filter/all-exceptions.filter';
-import RolesGuard from '@guard/roles.guard';
 import { ShareFunction } from '@helper/static-function';
 import { ValidationError, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
@@ -15,7 +15,6 @@ import morgan from 'morgan';
 import * as path from 'path';
 import { ExpressPeerServer } from 'peer';
 import AppModule from './route/app/app.module';
-import UserService from '@authorization/a1-user/user.service';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);

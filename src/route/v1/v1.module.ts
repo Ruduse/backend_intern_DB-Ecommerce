@@ -18,6 +18,7 @@ import HistoryModule from '@common/c9-history/history.module';
 import RolesGuard from '@guard/roles.guard';
 import { ShareFunction } from '@helper/static-function';
 import { Module } from '@nestjs/common';
+
 import { RouterModule, Routes } from 'nest-router';
 import TestModule from 'src/route/v1/features/f1-tests/test.module';
 import UserModule from './authorization/a1-user/user.module';
@@ -28,7 +29,9 @@ import StaticS3Module from './common/c5-static-s3/static-s3.module';
 import ProvinceModule from './common/c6-province/province.module';
 import DistrictModule from './common/c7-district/district.module';
 import VillageModule from './common/c8-village/village.module';
+import NotificationsModule from './features/f11-notifications/notifications.module';
 import ShopModule from './features/f2-shop/shop.module';
+import CategoriesModule from './features/f3-categories/categories.module';
 import ProductsModule from './features/f4-products/products.module';
 import SkusModule from './features/f5-skus/skus.module';
 import DiscountsModule from './features/f6-discounts/discounts.module';
@@ -70,9 +73,13 @@ const routes: Routes = [
       { path: '/tests', module: TestModule },
       { path: '/app-subscriptions', module: AppSubscriptionModule },
       { path: '/shop', module: ShopModule },
-      { path: '/products, model: ProductsModule' },
-      { path: '/skus, module: SkusModule' },
-      { path: '/discounts, module: DiscountsModule'},
+      { path: '/categories', module: CategoriesModule },
+      { path: '/products', module: ProductsModule },
+      { path: '/skus', module: SkusModule },
+      { path: '/discounts', module: DiscountsModule },
+      { path: '/notifications', module: NotificationsModule },
+
+      // { path: '/notifications, module: NotificationsModule' },
     ],
   },
 ];
@@ -118,9 +125,11 @@ const imports = [
   TestModule,
   AppSubscriptionModule,
   ShopModule,
+  CategoriesModule,
   ProductsModule,
   SkusModule,
   DiscountsModule,
+  NotificationsModule,
 ];
 
 if (ShareFunction.checkIsConfigS3Storage()) {

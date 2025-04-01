@@ -1,7 +1,7 @@
 import {
-  MongoTransferer,
-  MongoDBDuplexConnector,
   LocalFileSystemDuplexConnector,
+  MongoDBDuplexConnector,
+  MongoTransferer,
 } from 'mongodb-snapshot';
 
 // Mongo connector

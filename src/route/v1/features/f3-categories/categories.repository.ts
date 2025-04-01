@@ -2,12 +2,12 @@ import BaseRepository from '@base-inherit/base.repository';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { PaginateModel } from 'mongoose';
-import { Discount, DiscountDocument } from './schemas/discounts.schema';
+import { Categories, CategoriesDocument } from './schemas/categories.schema';
 
 @Injectable()
-export default class DiscountsRepository extends BaseRepository<DiscountDocument> {
+export default class CategoriesRepository extends BaseRepository<CategoriesDocument> {
   constructor(
-    @InjectModel(Discount.name) model: PaginateModel<DiscountDocument>,
+    @InjectModel(Categories.name) model: PaginateModel<CategoriesDocument>,
   ) {
     super(model);
   }
