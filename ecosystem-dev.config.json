@@ -1,0 +1,34 @@
+{
+  "apps": [
+    {
+      "name": "p85diary-backend-test",
+      "script": "dist/main.js",
+      "instances": 1,
+      "autorestart": true,
+      "watch": false,
+      "time": true,
+      "cwd": "/home/p85diary-backend-test/current",
+      "error_file": "/home/p85diary-backend-test/logs/web.err.log",
+      "out_file": "/home/p85diary-backend-test/logs/web.out.log",
+      "exec_mode": "cluster",
+      "env": {
+        "NODE_ENV": "production"
+      },
+      "env_production": {
+        "NODE_ENV": "production"
+      }
+    }
+  ],
+  "deploy": {
+    "develop": {
+      "user": "root",
+      "host": ["14.225.220.228"],
+      "ref": "origin/develop",
+      "repo": "git@gitlab.com:izisoftware2020/p85diary-backend.git",
+      "path": "/home/p85diary-backend-test",
+      "post-setup": "yarn install; yarn build; pm2 start ecosystem-dev.config.json --env develop",
+      "post-deploy": "yarn install; yarn build; pm2 restart ecosystem-dev.config.json --env develop",
+      "ssh_options": ["StrictHostKeyChecking=no", "PasswordAuthentication=no"]
+    }
+  }
+}
