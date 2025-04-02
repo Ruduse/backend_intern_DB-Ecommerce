@@ -17,15 +17,15 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import ParseObjectIdPipe from '@pipe/parse-object-id.pipe';
 import { Types } from 'mongoose';
-import CreateOrdersDto from './dto/create-orders.dto';
-import UpdateOrdersDto from './dto/update-orders.dto';
-import OrdersService from './orders.service';
+import CartsService from './carts.service';
+import CreateCartsDto from './dto/create-carts.dto';
+import UpdateCartsDto from './dto/update-carts.dto';
 
-@ApiTags('Orders')
+@ApiTags('Carts')
 @UseInterceptors(WrapResponseInterceptor)
 @Controller()
-export default class OrdersController {
-  constructor(private readonly orderService: OrdersService) {}
+export default class CartsController {
+  constructor(private readonly cartService: CartsService) {}
 
   /**
    * Find all
@@ -36,7 +36,7 @@ export default class OrdersController {
   @Get('')
   @HttpCode(200)
   async findAll(@Query() query: any): Promise<any> {
-    const result = await this.orderService.findManyBy(query);
+    const result = await this.cartService.findManyBy(query);
     return result;
   }
 
@@ -48,8 +48,8 @@ export default class OrdersController {
    */
   @Post('')
   @HttpCode(201)
-  async create(@Body() body: CreateOrdersDto): Promise<any> {
-    const result = await this.orderService.create(body);
+  async create(@Body() body: CreateCartsDto): Promise<any> {
+    const result = await this.cartService.create(body);
 
     return result;
   }
@@ -65,9 +65,9 @@ export default class OrdersController {
   @HttpCode(200)
   async update(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
-    @Body() body: UpdateOrdersDto,
+    @Body() body: UpdateCartsDto,
   ): Promise<any> {
-    const result = await this.orderService.updateOneById(id, body);
+    const result = await this.cartService.updateOneById(id, body);
 
     return result;
   }
@@ -81,7 +81,7 @@ export default class OrdersController {
   @Delete(':ids/ids')
   // @HttpCode(204)
   async deleteManyByIds(@Param('ids') ids: string): Promise<any> {
-    const result = await this.orderService.deleteManyHardByIds(
+    const result = await this.cartService.deleteManyHardByIds(
       ids.split(',').map((item: any) => new Types.ObjectId(item)),
     );
     return result;
@@ -98,7 +98,7 @@ export default class OrdersController {
   async delete(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
   ): Promise<any> {
-    const result = await this.orderService.deleteOneHardById(id);
+    const result = await this.cartService.deleteOneHardById(id);
 
     return result;
   }
@@ -112,7 +112,7 @@ export default class OrdersController {
   @Get('paginate')
   @HttpCode(200)
   async paginate(@ApiQueryParams() query: AqpDto): Promise<any> {
-    return this.orderService.paginate(query);
+    return this.cartService.paginate(query);
   }
 
   /**
@@ -126,7 +126,7 @@ export default class OrdersController {
   async findOneBy(
     @ApiQueryParams() { filter, projection }: AqpDto,
   ): Promise<any> {
-    return this.orderService.findOneBy(filter, {
+    return this.cartService.findOneBy(filter, {
       filter,
       projection,
     });
@@ -144,7 +144,7 @@ export default class OrdersController {
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
     @ApiQueryParams('population') populate: AqpDto,
   ): Promise<any> {
-    const result = await this.orderService.findOneById(id, { populate });
+    const result = await this.cartService.findOneById(id, { populate });
 
     if (!result) throw new NotFoundException('The item does not exist');
 

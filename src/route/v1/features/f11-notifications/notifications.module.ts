@@ -5,7 +5,7 @@ import NotificationsRepository from './notifications.repository';
 import NotificationsService from './notifications.service';
 import {
   Notification,
-  NotificationsSchema,
+  NotificationSchema,
 } from './schemas/notifications.schema';
 
 @Module({
@@ -13,7 +13,7 @@ import {
     MongooseModule.forFeature([
       {
         name: Notification.name,
-        schema: NotificationsSchema,
+        schema: NotificationSchema,
       },
     ]),
   ],

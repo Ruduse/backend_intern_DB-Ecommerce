@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import ShopModule from '../f2-shop/shop.module';
 import {
   ShippingMethod,
   ShippingMethodsSchema,
@@ -16,6 +17,7 @@ import ShippingMethodsService from './shipping-methods.service';
         schema: ShippingMethodsSchema,
       },
     ]),
+    ShopModule,
   ],
   controllers: [ShippingMethodsController],
   providers: [ShippingMethodsService, ShippingMethodsRepository],

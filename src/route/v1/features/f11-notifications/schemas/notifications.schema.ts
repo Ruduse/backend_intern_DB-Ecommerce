@@ -1,33 +1,43 @@
+
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
-export type NotificationDocument = Notification & Document;
+import { NotificationType } from '../enums/notification-type.enum';
 
-@Schema({ timestamps: true, versionKey: false, collection: 'notifications' })
+@Schema({ timestamps: true, versionKey: false, collection: 'products' })
 export class Notification {
-  @Prop({ type: String, required: true, ref: 'User' })
-  senderId: String;
-  @Prop({ type: String, required: true, ref: 'User' })
-  recipientId: String;
+  @Prop({ type: String, ref: 'User', required: true })
+  senderId: string;
+
+  @Prop({ type: String, ref: 'User', required: true })
+  recipientId: string;
+
+  @Prop({
+    type: String,
+    enum: NotificationType,
+    default: NotificationType.personal,
+  })
+  notificationType: NotificationType;
+
+  @Prop({ type: String, default: '' })
+  entityName?: string;
 
   @Prop({ type: String, required: true })
-  notificationType: string;
-
-  @Prop({ type: String, required: true })
-  entityName: string;
-
-  @Prop({ type: String, required: true, refPath: 'entityName' })
-  entityId: String;
+  entityId: string;
 
   @Prop({ type: String, required: true })
   title: string;
-  @Prop({ type: String, required: false })
-  description: string;
-  @Prop({ type: String, required: false })
-  thumbnail: string;
-  @Prop({ required: false, default: false })
+
+  @Prop({ type: String })
+  description?: string;
+
+  @Prop({ type: String })
+  thumbnail?: string;
+
+  @Prop({ type: Boolean, default: false })
   isOpened: boolean;
-  @Prop({ type: Object, required: false })
+
+  @Prop({ type: Object, default: {} })
   options: Record<string, any>;
 }
 
-export const NotificationsSchema = SchemaFactory.createForClass(Notification);
+export type NotificationDocument = Notification & Document;
+export const NotificationSchema = SchemaFactory.createForClass(Notification);

@@ -18,7 +18,7 @@ export class Order {
   shippingMethodId?: string;
 
   @Prop({ type: Number, required: true })
-  totalAmount: number;
+  totalAmount?: number;
 
   @Prop({
     type: String,

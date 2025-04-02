@@ -6,9 +6,7 @@ import { Cart, CartDocument } from './schemas/carts.schema';
 
 @Injectable()
 export default class CartsRepository extends BaseRepository<CartDocument> {
-  constructor(
-    @InjectModel(Cart.name) model: PaginateModel<CartDocument>,
-  ) {
+  constructor(@InjectModel(Cart.name) model: PaginateModel<CartDocument>) {
     super(model);
   }
 }

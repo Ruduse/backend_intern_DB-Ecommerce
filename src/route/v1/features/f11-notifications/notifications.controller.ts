@@ -23,7 +23,7 @@ import NotificationsService from './notifications.service';
 
 @ApiTags('Notifications')
 @UseInterceptors(WrapResponseInterceptor)
-@Controller('v1/notifications')
+@Controller()
 export default class NotificationsController {
   constructor(private readonly testService: NotificationsService) {}
 

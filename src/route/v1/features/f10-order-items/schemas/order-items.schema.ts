@@ -8,10 +8,10 @@ export class OrderItem {
   @Prop({ type: String, ref: 'Order', required: true })
   orderId: string;
 
-  @Prop({ type: String, ref: 'Product', required: true, unique: true })
+  @Prop({ type: String, ref: 'Product', required: true })
   productId: string;
-  @Prop({ type: String, ref: 'Sku', required: true, unique: true })
-  skudId: string;
+  @Prop({ type: String, ref: 'Sku', required: true })
+  skuId: string;
 
   @Prop({ type: Number, required: true, default: 0 })
   quantity: number;

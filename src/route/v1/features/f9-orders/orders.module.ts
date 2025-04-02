@@ -1,21 +1,27 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import DiscountsController from './discounts.controller';
-import DiscountsRepository from './discounts.repository';
-import DiscountsService from './discounts.service';
-import { Discount, DiscountsSchema } from './schemas/discounts.schema';
+import ShopModule from '../f2-shop/shop.module';
+import DiscountsModule from '../f6-discounts/discounts.module';
+import ShippingMethodsModule from '../f8-shipping-methods/shipping-methods.module';
+import OrdersController from './orders.controller';
+import OrdersRepository from './orders.repository';
+import OrdersService from './orders.service';
+import { Order, OrdersSchema } from './schemas/orders.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       {
-        name: Discount.name,
-        schema: DiscountsSchema,
+        name: Order.name,
+        schema: OrdersSchema,
       },
     ]),
+    ShopModule,
+    DiscountsModule,
+    ShippingMethodsModule,
   ],
-  controllers: [DiscountsController],
-  providers: [DiscountsService, DiscountsRepository],
-  exports: [DiscountsService, DiscountsRepository],
+  controllers: [OrdersController],
+  providers: [OrdersService, OrdersRepository],
+  exports: [OrdersService, OrdersRepository],
 })
-export default class DiscountsModule {}
+export default class OrdersModule {}

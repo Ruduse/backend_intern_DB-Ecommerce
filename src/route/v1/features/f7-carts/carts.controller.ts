@@ -99,7 +99,6 @@ export default class CartsController {
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
   ): Promise<any> {
     const result = await this.cartService.deleteOneHardById(id);
-
     return result;
   }
 
