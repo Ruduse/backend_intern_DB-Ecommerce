@@ -4,10 +4,10 @@ export type NotificationDocument = Notification & Document;
 
 @Schema({ timestamps: true, versionKey: false, collection: 'notifications' })
 export class Notification {
-  @Prop({ type: Types.ObjectId, required: true, ref: 'User' })
-  senderId: Types.ObjectId;
-  @Prop({ type: Types.ObjectId, required: true, ref: 'User' })
-  recipientId: Types.ObjectId;
+  @Prop({ type: String, required: true, ref: 'User' })
+  senderId: String;
+  @Prop({ type: String, required: true, ref: 'User' })
+  recipientId: String;
 
   @Prop({ type: String, required: true })
   notificationType: string;
@@ -15,8 +15,8 @@ export class Notification {
   @Prop({ type: String, required: true })
   entityName: string;
 
-  @Prop({ type: Types.ObjectId, required: true, refPath: 'entityName' })
-  entityId: Types.ObjectId;
+  @Prop({ type: String, required: true, refPath: 'entityName' })
+  entityId: String;
 
   @Prop({ type: String, required: true })
   title: string;

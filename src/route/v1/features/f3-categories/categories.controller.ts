@@ -23,7 +23,7 @@ import UpdateCategoriesDto from './dto/update-categories.dto';
 
 @ApiTags('Categories')
 @UseInterceptors(WrapResponseInterceptor)
-@Controller('v1/categories')
+@Controller()
 export default class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 

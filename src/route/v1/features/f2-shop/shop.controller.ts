@@ -25,7 +25,7 @@ import ShopService from './shop.service';
 @UseInterceptors(WrapResponseInterceptor)
 @Controller()
 export default class ShopController {
-  constructor(private readonly testService: ShopService) {}
+  constructor(private readonly shopService: ShopService) {}
 
   /**
    * Find all
@@ -36,7 +36,7 @@ export default class ShopController {
   @Get('')
   @HttpCode(200)
   async findAll(@Query() query: any): Promise<any> {
-    const result = await this.testService.findManyBy(query);
+    const result = await this.shopService.findManyBy(query);
     return result;
   }
 
@@ -49,7 +49,7 @@ export default class ShopController {
   @Post('')
   @HttpCode(201)
   async create(@Body() body: CreateShopDto): Promise<any> {
-    const result = await this.testService.create(body);
+    const result = await this.shopService.create(body);
 
     return result;
   }
@@ -67,7 +67,7 @@ export default class ShopController {
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
     @Body() body: UpdateShopDto,
   ): Promise<any> {
-    const result = await this.testService.updateOneById(id, body);
+    const result = await this.shopService.updateOneById(id, body);
 
     return result;
   }
@@ -81,7 +81,7 @@ export default class ShopController {
   @Delete(':ids/ids')
   // @HttpCode(204)
   async deleteManyByIds(@Param('ids') ids: string): Promise<any> {
-    const result = await this.testService.deleteManyHardByIds(
+    const result = await this.shopService.deleteManyHardByIds(
       ids.split(',').map((item: any) => new Types.ObjectId(item)),
     );
     return result;
@@ -98,7 +98,7 @@ export default class ShopController {
   async delete(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
   ): Promise<any> {
-    const result = await this.testService.deleteOneHardById(id);
+    const result = await this.shopService.deleteOneHardById(id);
 
     return result;
   }
@@ -112,7 +112,7 @@ export default class ShopController {
   @Get('paginate')
   @HttpCode(200)
   async paginate(@ApiQueryParams() query: AqpDto): Promise<any> {
-    return this.testService.paginate(query);
+    return this.shopService.paginate(query);
   }
 
   /**
@@ -126,7 +126,7 @@ export default class ShopController {
   async findOneBy(
     @ApiQueryParams() { filter, projection }: AqpDto,
   ): Promise<any> {
-    return this.testService.findOneBy(filter, {
+    return this.shopService.findOneBy(filter, {
       filter,
       projection,
     });
@@ -144,7 +144,7 @@ export default class ShopController {
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
     @ApiQueryParams('population') populate: AqpDto,
   ): Promise<any> {
-    const result = await this.testService.findOneById(id, { populate });
+    const result = await this.shopService.findOneById(id, { populate });
 
     if (!result) throw new NotFoundException('The item does not exist');
 

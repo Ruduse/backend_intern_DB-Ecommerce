@@ -1,21 +1,39 @@
-import { IsArray, IsNumber, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+import { AttributeDto } from './attribute.dto';
 
 export default class CreateSkuDto {
   @IsString()
+  @IsNotEmpty()
   productId: string;
 
   @IsString()
+  @IsNotEmpty()
   name: string;
 
   @IsNumber()
+  @IsNotEmpty()
   price: number;
 
   @IsNumber()
+  @IsNotEmpty()
   stock: number;
 
   @IsArray()
-  attributes: { name: string; value: string }[];
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => AttributeDto)
+  attributes: AttributeDto[];
 
+  @IsOptional()
   @IsArray()
-  images: string[];
+  @IsString({ each: true })
+  images?: string[];
 }

@@ -23,7 +23,7 @@ import ProductsService from './products.service';
 
 @ApiTags('Products')
 @UseInterceptors(WrapResponseInterceptor)
-@Controller('v1/products')
+@Controller()
 export default class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 

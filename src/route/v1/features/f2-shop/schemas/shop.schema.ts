@@ -1,8 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 @Schema({ timestamps: true, versionKey: false, collection: 'shops' })
 export class Shop {
+  @Prop({ type: Types.ObjectId, ref: 'user', required: true })
+  ownerId: Types.ObjectId;
   @Prop({ type: String, default: '' })
   name: string;
 

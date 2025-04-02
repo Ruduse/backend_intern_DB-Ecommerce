@@ -5,7 +5,7 @@ export type DiscountDocument = Discount & Document;
 
 @Schema({ timestamps: true, versionKey: false, collection: 'discounts' })
 export class Discount {
-  @Prop({ required: true })
+  @Prop({ type: String, ref: 'Shop', required: true })
   shopId: string;
 
   @Prop({ required: true, unique: true })

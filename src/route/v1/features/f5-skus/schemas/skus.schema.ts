@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 
 @Schema({ timestamps: true, versionKey: false, collection: 'shops' })
 export class Sku {
-  @Prop({ type: String, ref: 'Product', required: true })
+  @Prop({ type: String, req: 'Product', required: true, auto: true }) // ObjectId tự động sinh
   productId: string;
 
   @Prop({ required: true })

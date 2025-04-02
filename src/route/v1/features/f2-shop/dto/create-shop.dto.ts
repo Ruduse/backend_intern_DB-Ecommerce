@@ -1,6 +1,11 @@
 import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { ObjectId } from 'mongoose';
 
 export default class CreateShopDto {
+  @IsNotEmpty()
+  @IsString()
+  ownerId: ObjectId;
+  
   @IsNotEmpty()
   @IsString()
   name: string;
