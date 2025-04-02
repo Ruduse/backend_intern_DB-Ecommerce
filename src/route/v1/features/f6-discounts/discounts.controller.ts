@@ -18,8 +18,8 @@ import { ApiTags } from '@nestjs/swagger';
 import ParseObjectIdPipe from '@pipe/parse-object-id.pipe';
 import { Types } from 'mongoose';
 import DiscountsService from './discounts.service';
-import CreateDiscountsDto from './dto/create-discounts.dto';
-import UpdateDiscountsDto from './dto/update-discounts.dto';
+import { CreateDiscountDto } from './dto/create-discounts.dto';
+import UpdateDiscountDto from './dto/update-discounts.dto';
 
 @ApiTags('Discounts')
 @UseInterceptors(WrapResponseInterceptor)
@@ -48,7 +48,7 @@ export default class DiscountsController {
    */
   @Post('')
   @HttpCode(201)
-  async create(@Body() body: CreateDiscountsDto): Promise<any> {
+  async create(@Body() body: CreateDiscountDto): Promise<any> {
     const result = await this.discountsService.create(body);
 
     return result;
@@ -65,7 +65,7 @@ export default class DiscountsController {
   @HttpCode(200)
   async update(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
-    @Body() body: UpdateDiscountsDto,
+    @Body() body: UpdateDiscountDto,
   ): Promise<any> {
     const result = await this.discountsService.updateOneById(id, body);
 

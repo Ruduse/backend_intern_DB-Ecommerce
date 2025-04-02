@@ -6,13 +6,13 @@ export class Sku {
   @Prop({ type: String, req: 'Product', required: true, auto: true }) // ObjectId tự động sinh
   productId: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   name: string;
 
-  @Prop({ required: true })
+  @Prop({ type: Number, required: true })
   price: number;
 
-  @Prop({ required: true })
+  @Prop({ type: Number, required: true })
   stock: number;
 
   @Prop({

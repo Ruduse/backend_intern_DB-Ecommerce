@@ -1,42 +1,43 @@
 import {
   IsDateString,
   IsEnum,
-  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
+  Min,
 } from 'class-validator';
 
-export default class CreateDiscountsDto {
+export enum DiscountType {
+  PERCENTAGE = 'percentage',
+  FIXED = 'fixed',
+}
+
+export class CreateDiscountDto {
   @IsString()
-  @IsNotEmpty()
   shopId: string;
 
   @IsString()
-  @IsNotEmpty()
   code: string;
 
-  @IsEnum(['percentage', 'fixed'])
-  @IsNotEmpty()
-  discountType: string;
+  @IsEnum(DiscountType)
+  discountType: DiscountType;
 
   @IsNumber()
-  @IsNotEmpty()
+  @Min(0)
   discountValue: number;
 
   @IsNumber()
-  @IsNotEmpty()
+  @Min(0)
   minOrderValue: number;
 
-  @IsOptional()
   @IsNumber()
+  @Min(0)
+  @IsOptional()
   maxDiscount?: number;
 
   @IsDateString()
-  @IsNotEmpty()
   startDate: string;
 
   @IsDateString()
-  @IsNotEmpty()
   endDate: string;
 }

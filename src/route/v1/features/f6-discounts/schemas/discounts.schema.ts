@@ -8,25 +8,25 @@ export class Discount {
   @Prop({ type: String, ref: 'Shop', required: true })
   shopId: string;
 
-  @Prop({ required: true, unique: true })
+  @Prop({ type: String, required: true, unique: true })
   code: string;
 
-  @Prop({ required: true, enum: ['percentage', 'fixed'] })
+  @Prop({ type: String, required: true, enum: ['percentage', 'fixed'] })
   discountType: string;
 
-  @Prop({ required: true })
+  @Prop({ type: Number, required: true })
   discountValue: number;
 
-  @Prop({ required: true })
+  @Prop({ type: Number, required: true })
   minOrderValue: number;
 
-  @Prop({ required: false })
+  @Prop({ type: Number, required: false })
   maxDiscount?: number;
 
-  @Prop({ required: true })
+  @Prop({ type: Date, required: true })
   startDate: Date;
 
-  @Prop({ required: true })
+  @Prop({ type: Date, required: true })
   endDate: Date;
 }
 

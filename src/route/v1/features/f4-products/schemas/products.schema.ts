@@ -9,16 +9,16 @@ export class Product {
   @Prop({ type: String, ref: 'Category', required: true })
   categoryId: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   name: string;
 
-  @Prop()
+  @Prop({ type: String })
   description: string;
 
-  @Prop({ required: true })
+  @Prop({ type: Number, required: true })
   price: number;
 
-  @Prop({ default: true })
+  @Prop({ type: Boolean, default: true })
   isActive: boolean;
 
   @Prop({ type: [String], default: [] })
