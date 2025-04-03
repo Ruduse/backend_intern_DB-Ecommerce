@@ -100,7 +100,7 @@ export default class BaseService<T> {
    * @param data object
    * @returns Promise<any>
    */
-  public updateManyBy(query = {}, data = {}): Promise<any | null> {
+  public updateManyBy(query = {}, data = {}, quantity?: number): Promise<any | null> {
     return this.baseRepository.updateManyBy(query, data);
   }
 

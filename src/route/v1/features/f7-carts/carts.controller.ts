@@ -18,6 +18,7 @@ import { ApiTags } from '@nestjs/swagger';
 import ParseObjectIdPipe from '@pipe/parse-object-id.pipe';
 import { Types } from 'mongoose';
 import CartsService from './carts.service';
+import AddToCartDto from './dto/add-to-carts.dto';
 import CreateCartsDto from './dto/create-carts.dto';
 import UpdateCartsDto from './dto/update-carts.dto';
 
@@ -26,7 +27,26 @@ import UpdateCartsDto from './dto/update-carts.dto';
 @Controller()
 export default class CartsController {
   constructor(private readonly cartService: CartsService) {}
+  @Post('add')
+  async addToCart(
+    @Query('userId') userId: string,
+    @Body() addToCartDto: AddToCartDto,
+  ) {
+    return this.cartService.addToCart(userId, addToCartDto);
+  }
 
+  @Get()
+  async getCart(@Query('userId') userId: string) {
+    return this.cartService.getCart(userId);
+  }
+
+  @Delete(':skuId')
+  async removeCartItem(
+    @Query('userId') userId: string,
+    @Param('skuId') skuId: string,
+  ) {
+    return this.cartService.removeCartItem(userId, skuId);
+  }
   /**
    * Find all
    *

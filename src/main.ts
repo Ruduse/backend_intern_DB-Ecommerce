@@ -15,6 +15,7 @@ import morgan from 'morgan';
 import * as path from 'path';
 import { ExpressPeerServer } from 'peer';
 import AppModule from './route/app/app.module';
+// import RolesGuard from '@guard/roles.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);

@@ -8,5 +8,4 @@ export class AttributeDto {
   @IsNotEmpty()
   @IsString()
   value: string;
-
 }
