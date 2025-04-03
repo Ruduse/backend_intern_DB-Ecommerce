@@ -53,6 +53,10 @@ export default class CartsController {
    * @param query
    * @returns
    */
+  @Get('total-price')
+  async getTotalPrice(@Query('userId') userId: string) {
+    return this.cartService.totalPrice(userId);
+  }
   @Get('')
   @HttpCode(200)
   async findAll(@Query() query: any): Promise<any> {
