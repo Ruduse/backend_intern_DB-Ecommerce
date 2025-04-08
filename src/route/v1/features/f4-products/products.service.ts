@@ -1,7 +1,6 @@
-// src/products/products.service.ts
 import BaseService from '@base-inherit/base.service';
 import CustomLoggerService from '@lazy-module/logger/logger.service';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { SearchProductDto } from './dto/search-products.dto';
 import ProductsRepository from './products.repository';
 import { ProductsDocument } from './schemas/products.schema';
@@ -29,15 +28,25 @@ export default class ProductsService extends BaseService<ProductsDocument> {
     if (minPrice !== undefined || maxPrice !== undefined) {
       filter.price = {};
       if (minPrice !== undefined) {
-        filter.price.$gte = minPrice; // Giá tối thiểu
+        filter.price.$gte;
+        if (maxPrice !== undefined) {
+          filter.price.$lte = maxPrice; // Giá tối đa
+        }
       }
-      if (maxPrice !== undefined) {
-        filter.price.$lte = maxPrice; // Giá tối đa
-      }
+
+      this.logger.debug('Searching products with filter:', filter);
+
+      return this.productsRepository.findManyBy(filter); // tìm nhiều sản phẩm theo filter
+    }
+  }
+
+  async getProductById(productId: string) {
+    const product = await this.productsRepository.findOneById(productId);
+
+    if (!product) {
+      throw new NotFoundException('Product not found');
     }
 
-    this.logger.debug('Searching products with filter:', filter);
-
-    return this.productsRepository.findManyBy(filter); // tìm nhiều sản phẩm theo filter
+    return product;
   }
 }
