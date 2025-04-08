@@ -18,6 +18,7 @@ import { ApiTags } from '@nestjs/swagger';
 import ParseObjectIdPipe from '@pipe/parse-object-id.pipe';
 import { Types } from 'mongoose';
 import CreateProductsDto from './dto/create-products.dto';
+import { SearchProductDto } from './dto/search-products.dto'; // nhớ import nhé
 import UpdateProductsDto from './dto/update-products.dto';
 import ProductsService from './products.service';
 
@@ -26,7 +27,11 @@ import ProductsService from './products.service';
 @Controller()
 export default class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
-
+  @Get('search')
+  @HttpCode(200)
+  async search(@Query() searchDto: SearchProductDto): Promise<any> {
+    return this.productsService.searchProducts(searchDto);
+  }
   @Get()
   @HttpCode(200)
   async findAll(@Query() query: any): Promise<any> {
