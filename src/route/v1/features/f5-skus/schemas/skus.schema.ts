@@ -7,19 +7,34 @@ export class Sku {
   productId: string;
 
   @Prop({ type: String, required: true })
-  name: string;
+  skuCode: string;
 
   @Prop({ type: Number, required: true })
-  price: number;
+  originalPrice: number;
 
   @Prop({ type: Number, required: true })
-  stock: number;
+  basePrice: number;
 
   @Prop({
     type: [{ name: String, value: String }],
     default: [],
   })
   attributes: Array<{ name: string; value: string }>;
+
+  @Prop({ type: Number, default: 1 })
+  quantity: number;
+
+  @Prop({ type: String, req: 'Product', required: true, auto: true }) // ObjectId tự động sinh
+  thumbnail: string;
+
+  @Prop({ type: Boolean, required: true, default: false })
+  isDeleted: boolean;
+
+  @Prop({ type: Boolean, required: true, default: true })
+  isActive: boolean;
+
+  @Prop({ type: Number, required: true })
+  soldCount: number;
 
   @Prop({ type: [String], default: [] })
   images: string[];

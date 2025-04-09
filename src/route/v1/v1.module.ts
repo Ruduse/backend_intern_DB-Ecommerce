@@ -29,16 +29,6 @@ import StaticS3Module from './common/c5-static-s3/static-s3.module';
 import ProvinceModule from './common/c6-province/province.module';
 import DistrictModule from './common/c7-district/district.module';
 import VillageModule from './common/c8-village/village.module';
-import OrderItemsModule from './features/f10-order-items/order-items.module';
-import NotificationsModule from './features/f11-notifications/notifications.module';
-import ShopModule from './features/f2-shop/shop.module';
-import CategoriesModule from './features/f3-categories/categories.module';
-import ProductsModule from './features/f4-products/products.module';
-import SkusModule from './features/f5-skus/skus.module';
-import DiscountsModule from './features/f6-discounts/discounts.module';
-import CartsModule from './features/f7-carts/carts.module';
-import ShippingMethodsModule from './features/f8-shipping-methods/shipping-methods.module';
-import OrdersModule from './features/f9-orders/orders.module';
 
 const routes: Routes = [
   {
@@ -76,17 +66,6 @@ const routes: Routes = [
       { path: '/cron-settings', module: CronSettingModule },
       { path: '/tests', module: TestModule },
       { path: '/app-subscriptions', module: AppSubscriptionModule },
-      { path: '/shop', module: ShopModule },
-      { path: '/categories', module: CategoriesModule },
-      { path: '/products', module: ProductsModule },
-      { path: '/skus', module: SkusModule },
-      { path: '/discounts', module: DiscountsModule },
-      { path: '/carts', module: CartsModule },
-      { path: '/shipping-methods', module: ShippingMethodsModule },
-      { path: '/orders', module: OrdersModule },
-      { path: '/order-items', module: OrderItemsModule },
-      { path: '/notifications', module: NotificationsModule },
-
       // { path: '/notifications, module: NotificationsModule' },
     ],
   },
@@ -132,16 +111,6 @@ const imports = [
   // features
   TestModule,
   AppSubscriptionModule,
-  ShopModule,
-  CategoriesModule,
-  ProductsModule,
-  SkusModule,
-  DiscountsModule,
-  CartsModule,
-  ShippingMethodsModule,
-  OrdersModule,
-  OrderItemsModule,
-  NotificationsModule,
 ];
 
 if (ShareFunction.checkIsConfigS3Storage()) {

@@ -8,32 +8,108 @@ import {
   IsString,
 } from 'class-validator';
 
-export default class CreateProductsDto {
-  @IsMongoId()
+export class CreateProductDto {
   @IsNotEmpty()
-  shopId: string;
-
   @IsMongoId()
-  @IsNotEmpty()
-  categoryId: string;
+  creatorId: string;
 
+  @IsOptional()
+  @IsArray()
+  @IsMongoId({ each: true })
+  categoryIds?: string[];
+
+  @IsOptional()
+  @IsMongoId()
+  brandId?: string;
+
+  @IsNotEmpty()
   @IsString()
-  @IsNotEmpty()
   name: string;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   description?: string;
 
-  @IsNumber()
-  @IsNotEmpty()
-  price: number;
-
-  @IsBoolean()
   @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  images?: string[];
+
+  @IsOptional()
+  @IsString()
+  video?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  warranties?: string[];
+
+  @IsOptional()
+  @IsNumber()
+  viewsCount?: number;
+
+  @IsOptional()
+  @IsNumber()
+  soldCount?: number;
+
+  @IsOptional()
+  @IsNumber()
+  reviewsCount?: number;
+
+  @IsOptional()
+  @IsNumber()
+  totalRatings?: number;
+
+  @IsOptional()
+  @IsNumber()
+  likedCount?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  isHot?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  isNew?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  isRewardPoint?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
   isActive?: boolean;
 
-  @IsArray()
   @IsOptional()
-  images?: string[];
+  @IsString()
+  skuMin?: string;
+
+  @IsOptional()
+  @IsString()
+  skuMax?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsMongoId({ each: true })
+  skuIds?: string[];
+
+  @IsOptional()
+  @IsMongoId()
+  shopId?: string;
+
+  @IsOptional()
+  @IsNumber()
+  quantity?: number;
+
+  @IsOptional()
+  @IsString()
+  nameEn?: string;
+
+  @IsOptional()
+  @IsString()
+  descriptionEn?: string;
+
+  @IsOptional()
+  @IsString()
+  idProductBravo?: string;
 }
