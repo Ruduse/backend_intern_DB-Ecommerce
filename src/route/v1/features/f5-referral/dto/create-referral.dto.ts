@@ -1,5 +1,11 @@
-import { IsEnum, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
-import { Referral } from '../schemas/referral.schema';
+import {
+  IsEnum,
+  IsMongoId,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { ReferralStatus } from '../enums/referral.enums';
 
 export default class CreateReferralDto {
@@ -21,5 +27,5 @@ export default class CreateReferralDto {
 
   @IsOptional()
   @IsEnum(ReferralStatus)
-  status?: ReferralStatus
+  status?: ReferralStatus;
 }

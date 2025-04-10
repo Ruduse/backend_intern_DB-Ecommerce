@@ -6,7 +6,9 @@ import { UserAdress, UserAdressDocument } from './schemas/useradress.schema';
 
 @Injectable()
 export default class UserAdressRepository extends BaseRepository<UserAdressDocument> {
-  constructor(@InjectModel(UserAdress.name) model: PaginateModel<UserAdressDocument>) {
+  constructor(
+    @InjectModel(UserAdress.name) model: PaginateModel<UserAdressDocument>,
+  ) {
     super(model);
   }
 }

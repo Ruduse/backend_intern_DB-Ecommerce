@@ -20,5 +20,4 @@ export default class CreateBankDto {
   @IsOptional()
   @IsBoolean()
   isShow?: boolean;
-
 }

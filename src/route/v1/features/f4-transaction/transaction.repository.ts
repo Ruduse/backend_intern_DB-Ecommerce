@@ -6,7 +6,9 @@ import { Transaction, TransactionDocument } from './schemas/transaction.schema';
 
 @Injectable()
 export default class TransactionRepository extends BaseRepository<TransactionDocument> {
-  constructor(@InjectModel(Transaction.name) model: PaginateModel<TransactionDocument>) {
+  constructor(
+    @InjectModel(Transaction.name) model: PaginateModel<TransactionDocument>,
+  ) {
     super(model);
   }
 }

@@ -1,4 +1,10 @@
-import { IsMongoId, IsNotEmpty, IsNumber, Min } from 'class-validator';
+import {
+  IsMongoId,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  Min,
+} from 'class-validator';
 
 export default class AddToCartDto {
   @IsMongoId()
@@ -8,6 +14,10 @@ export default class AddToCartDto {
   @IsMongoId()
   @IsNotEmpty()
   skuId: string;
+
+  @IsMongoId()
+  @IsOptional()
+  discountId: string;
 
   @IsNumber()
   @Min(1)

@@ -11,7 +11,7 @@ import AddToCartDto from './add-to-carts.dto';
 export default class CreateCardDto {
   @IsMongoId()
   @IsNotEmpty()
-  userId: string;
+  customerId: string;
 
   @IsArray()
   @ValidateNested({ each: true })
