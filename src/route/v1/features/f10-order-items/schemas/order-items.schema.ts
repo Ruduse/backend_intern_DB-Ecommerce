@@ -13,11 +13,26 @@ export class OrderItem {
   @Prop({ type: String, ref: 'Sku', required: true })
   skuId: string;
 
+  @Prop({ type: String, ref: 'Discount', required: true })
+  discountId: string;
+
   @Prop({ type: Number, required: true, default: 0 })
   quantity: number;
 
+  @Prop({ type: String, required: true, default: 0 })
+  note: string;
+
   @Prop({ type: Number, required: true, default: 0 })
-  price: number;
+  basePrice: number;
+
+  @Prop({ type: Number, required: true, default: 0 })
+  discountAmount: number;
+
+  @Prop({ type: Number, required: true, default: 0 })
+  totalAmount: number;
+
+  @Prop({ type: String, ref: 'Shop', required: true })
+  shopId: string;
 }
 
 export const OrderItemsSchema = SchemaFactory.createForClass(OrderItem);

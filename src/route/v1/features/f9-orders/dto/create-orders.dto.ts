@@ -61,7 +61,6 @@ class ContactDto {
   contactPhone: string;
 }
 
-
 class StatusHistoryDto {
   @IsString()
   @IsNotEmpty()

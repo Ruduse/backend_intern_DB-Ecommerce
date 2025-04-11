@@ -8,8 +8,8 @@ import UserBankRepository from './userBank.repository';
 export default class UserBankService extends BaseService<UserBankDocument> {
   constructor(
     readonly logger: CustomLoggerService,
-    readonly userBankBankRepository: UserBankRepository,
+    readonly userBankRepository: UserBankRepository,
   ) {
-    super(logger, UserBankRepository);
+    super(logger, userBankRepository);
   }
 }
