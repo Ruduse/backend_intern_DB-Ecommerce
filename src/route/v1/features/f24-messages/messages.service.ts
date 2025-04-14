@@ -1,15 +1,15 @@
 import BaseService from '@base-inherit/base.service';
 import CustomLoggerService from '@lazy-module/logger/logger.service';
 import { Injectable } from '@nestjs/common';
-import BannerRepository from './banner.repository';
-import { BannerDocument } from './schemas/banner.schema';
+import MessageRepository from './messages.repository';
+import { MessageDocument } from './schemas/messages.schema';
 
 @Injectable()
-export default class BannerService extends BaseService<BannerDocument> {
+export default class MessageService extends BaseService<MessageDocument> {
   constructor(
     readonly logger: CustomLoggerService,
-    readonly bannerRepository: BannerRepository,
+    readonly messageRepository: MessageRepository,
   ) {
-    super(logger, bannerRepository);
+    super(logger, messageRepository);
   }
 }

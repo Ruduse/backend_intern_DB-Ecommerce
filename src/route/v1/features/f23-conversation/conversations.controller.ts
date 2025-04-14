@@ -17,15 +17,15 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import ParseObjectIdPipe from '@pipe/parse-object-id.pipe';
 import { Types } from 'mongoose';
-import ConservationService from './conservations.service';
-import { CreateConversationDto } from './dto/create-conservations.dto';
-import UpdateConversationDto from './dto/update-conservations.dto';
+import conversationService from './conversation.service';
+import { CreateConversationDto } from './dto/create-conversation.dto';
+import UpdateConversationDto from './dto/update-conversation.dto';
 
-@ApiTags('Conservations')
+@ApiTags('conversation')
 @UseInterceptors(WrapResponseInterceptor)
 @Controller()
-export default class ConservationController {
-  constructor(private readonly conservationService: ConservationService) {}
+export default class ConversationController {
+  constructor(private readonly conversationervice: conversationService) {}
 
   /**
    * Find all
@@ -36,7 +36,7 @@ export default class ConservationController {
   @Get('')
   @HttpCode(200)
   async findAll(@Query() query: any): Promise<any> {
-    const result = await this.conservationService.findManyBy(query);
+    const result = await this.conversationervice.findManyBy(query);
     return result;
   }
 
@@ -49,7 +49,7 @@ export default class ConservationController {
   @Post('')
   @HttpCode(201)
   async create(@Body() body: CreateConversationDto): Promise<any> {
-    const result = await this.conservationService.create(body);
+    const result = await this.conversationervice.create(body);
 
     return result;
   }
@@ -67,7 +67,7 @@ export default class ConservationController {
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
     @Body() body: UpdateConversationDto,
   ): Promise<any> {
-    const result = await this.conservationService.updateOneById(id, body);
+    const result = await this.conversationervice.updateOneById(id, body);
 
     return result;
   }
@@ -81,7 +81,7 @@ export default class ConservationController {
   @Delete(':ids/ids')
   // @HttpCode(204)
   async deleteManyByIds(@Param('ids') ids: string): Promise<any> {
-    const result = await this.conservationService.deleteManyHardByIds(
+    const result = await this.conversationervice.deleteManyHardByIds(
       ids.split(',').map((item: any) => new Types.ObjectId(item)),
     );
     return result;
@@ -98,7 +98,7 @@ export default class ConservationController {
   async delete(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
   ): Promise<any> {
-    const result = await this.conservationService.deleteOneHardById(id);
+    const result = await this.conversationervice.deleteOneHardById(id);
 
     return result;
   }
@@ -112,7 +112,7 @@ export default class ConservationController {
   @Get('paginate')
   @HttpCode(200)
   async paginate(@ApiQueryParams() query: AqpDto): Promise<any> {
-    return this.conservationService.paginate(query);
+    return this.conversationervice.paginate(query);
   }
 
   /**
@@ -126,7 +126,7 @@ export default class ConservationController {
   async findOneBy(
     @ApiQueryParams() { filter, projection }: AqpDto,
   ): Promise<any> {
-    return this.conservationService.findOneBy(filter, {
+    return this.conversationervice.findOneBy(filter, {
       filter,
       projection,
     });
@@ -144,7 +144,7 @@ export default class ConservationController {
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
     @ApiQueryParams('population') populate: AqpDto,
   ): Promise<any> {
-    const result = await this.conservationService.findOneById(id, { populate });
+    const result = await this.conversationervice.findOneById(id, { populate });
 
     if (!result) throw new NotFoundException('The item does not exist');
 

@@ -17,9 +17,10 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import ParseObjectIdPipe from '@pipe/parse-object-id.pipe';
 import { Types } from 'mongoose';
-import BranchService from './branch.service';
-import CreateBranchDto from './dto/create-branches.dto';
+import BranchService from './branches.service';
 import UpdateBranchDto from './dto/update-branches.dto';
+
+import { CreateBranchDto } from './dto/create-branches.dto';
 
 @ApiTags('Branchs')
 @UseInterceptors(WrapResponseInterceptor)

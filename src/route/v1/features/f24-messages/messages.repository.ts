@@ -6,7 +6,9 @@ import { Message, MessageDocument } from './schemas/messages.schema';
 
 @Injectable()
 export default class MessageRepository extends BaseRepository<MessageDocument> {
-  constructor(@InjectModel(Message.name) model: PaginateModel<MessageDocument>) {
+  constructor(
+    @InjectModel(Message.name) model: PaginateModel<MessageDocument>,
+  ) {
     super(model);
   }
 }
