@@ -1,3 +1,4 @@
 import { PartialType } from '@nestjs/mapped-types';
+import { CreateNewsDto } from './create-news.dto';
 
-export default class UpdateBannerDto extends PartialType(CreateBannerDto) {}
+export default class UpdateNewsDto extends PartialType(CreateNewsDto) {}

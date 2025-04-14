@@ -11,7 +11,8 @@ export class CartItem {
 
   @Prop({ type: Number, required: true })
   quantity: number;
-
+  @Prop({ type: String, ref: 'discount', required: false })
+  discountId: string;
   @Prop({ type: Number, ref: 'Sku', required: true })
   skuId: string;
 

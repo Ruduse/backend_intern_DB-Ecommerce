@@ -1,29 +1,28 @@
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsArray, IsOptional, IsString } from 'class-validator';
 
-export default class CreateBannerDto {
-  @IsNotEmpty()
+export class CreateMessageDto {
   @IsString()
-  name: string;
+  conversationId: string;
 
-  @IsNotEmpty()
   @IsString()
-  image: string;
+  senderId: string;
 
   @IsOptional()
   @IsString()
-  link: string;
+  content?: string;
 
   @IsOptional()
-  @IsBoolean()
-  isShow?: boolean;
+  @IsArray()
+  @IsString({ each: true })
+  images?: string[];
 
   @IsOptional()
-  @IsNumber()
-  posittion: string;
+  @IsArray()
+  @IsString({ each: true })
+  videos?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  seenBy?: string[];
 }

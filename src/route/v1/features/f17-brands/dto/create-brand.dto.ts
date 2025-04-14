@@ -6,18 +6,14 @@ import {
   IsString,
 } from 'class-validator';
 
-export default class CreateBannerDto {
+export default class CreateBrandDto {
   @IsNotEmpty()
   @IsString()
   name: string;
 
-  @IsNotEmpty()
   @IsString()
-  image: string;
-
   @IsOptional()
-  @IsString()
-  link: string;
+  thumbnail?: string;
 
   @IsOptional()
   @IsBoolean()

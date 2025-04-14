@@ -1,29 +1,49 @@
 import {
-  IsBoolean,
+  IsArray,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
+  Max,
+  Min,
 } from 'class-validator';
 
-export default class CreateBannerDto {
+export class CreateReviewDto {
+  @IsString()
   @IsNotEmpty()
-  @IsString()
-  name: string;
+  orderId: string;
 
+  @IsString()
   @IsNotEmpty()
+  productId: string;
+
   @IsString()
-  image: string;
+  @IsNotEmpty()
+  skuId: string;
 
-  @IsOptional()
   @IsString()
-  link: string;
+  @IsNotEmpty()
+  customerId: string;
 
-  @IsOptional()
-  @IsBoolean()
-  isShow?: boolean;
-
-  @IsOptional()
   @IsNumber()
-  posittion: string;
+  @Min(1)
+  @Max(5)
+  rating: number;
+
+  @IsArray()
+  @IsOptional()
+  @IsString({ each: true })
+  attachments?: string[];
+
+  @IsString()
+  @IsOptional()
+  content?: string;
+
+  @IsNumber()
+  @IsOptional()
+  likes?: number;
+
+  @IsString()
+  @IsOptional()
+  replyId?: string;
 }

@@ -6,7 +6,9 @@ import { Attribute, AttributeDocument } from './schemas/attribute.schema';
 
 @Injectable()
 export default class AttributeRepository extends BaseRepository<AttributeDocument> {
-  constructor(@InjectModel(Attribute.name) model: PaginateModel<AttributeDocument>) {
+  constructor(
+    @InjectModel(Attribute.name) model: PaginateModel<AttributeDocument>,
+  ) {
     super(model);
   }
 }

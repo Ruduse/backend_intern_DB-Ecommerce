@@ -1,29 +1,28 @@
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsBoolean, IsInt, IsOptional, IsString } from 'class-validator';
 
-export default class CreateBannerDto {
-  @IsNotEmpty()
+export class CreateBranchDto {
   @IsString()
   name: string;
 
-  @IsNotEmpty()
   @IsString()
-  image: string;
+  description: string;
 
-  @IsOptional()
   @IsString()
-  link: string;
+  code: string;
 
-  @IsOptional()
+  @IsInt()
+  provinceId: number;
+
+  @IsInt()
+  districtId: number;
+
+  @IsInt()
+  villageId: number;
+
+  @IsString()
+  street: string;
+
   @IsBoolean()
-  isShow?: boolean;
-
   @IsOptional()
-  @IsNumber()
-  posittion: string;
+  isActive: boolean = true;
 }

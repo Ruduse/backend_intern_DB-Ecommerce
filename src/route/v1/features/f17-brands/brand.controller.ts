@@ -17,15 +17,15 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import ParseObjectIdPipe from '@pipe/parse-object-id.pipe';
 import { Types } from 'mongoose';
-import BannerService from './banner.service';
-import CreateBannerDto from './dto/create-banner.dto';
-import UpdateBannerDto from './dto/update-banner.dto';
+import BrandService from './brand.service';
+import CreateBrandDto from './dto/create-brand.dto';
+import UpdateBrandDto from './dto/update-brand.dto';
 
-@ApiTags('Banners')
+@ApiTags('Brands')
 @UseInterceptors(WrapResponseInterceptor)
 @Controller()
-export default class BannerController {
-  constructor(private readonly bannerService: BannerService) {}
+export default class BrandController {
+  constructor(private readonly brandService: BrandService) {}
 
   /**
    * Find all
@@ -36,7 +36,7 @@ export default class BannerController {
   @Get('')
   @HttpCode(200)
   async findAll(@Query() query: any): Promise<any> {
-    const result = await this.bannerService.findManyBy(query);
+    const result = await this.brandService.findManyBy(query);
     return result;
   }
 
@@ -48,8 +48,8 @@ export default class BannerController {
    */
   @Post('')
   @HttpCode(201)
-  async create(@Body() body: CreateBannerDto): Promise<any> {
-    const result = await this.bannerService.create(body);
+  async create(@Body() body: CreateBrandDto): Promise<any> {
+    const result = await this.brandService.create(body);
 
     return result;
   }
@@ -65,9 +65,9 @@ export default class BannerController {
   @HttpCode(200)
   async update(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
-    @Body() body: UpdateBannerDto,
+    @Body() body: UpdateBrandDto,
   ): Promise<any> {
-    const result = await this.bannerService.updateOneById(id, body);
+    const result = await this.brandService.updateOneById(id, body);
 
     return result;
   }
@@ -81,7 +81,7 @@ export default class BannerController {
   @Delete(':ids/ids')
   // @HttpCode(204)
   async deleteManyByIds(@Param('ids') ids: string): Promise<any> {
-    const result = await this.bannerService.deleteManyHardByIds(
+    const result = await this.brandService.deleteManyHardByIds(
       ids.split(',').map((item: any) => new Types.ObjectId(item)),
     );
     return result;
@@ -98,7 +98,7 @@ export default class BannerController {
   async delete(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
   ): Promise<any> {
-    const result = await this.bannerService.deleteOneHardById(id);
+    const result = await this.brandService.deleteOneHardById(id);
 
     return result;
   }
@@ -112,7 +112,7 @@ export default class BannerController {
   @Get('paginate')
   @HttpCode(200)
   async paginate(@ApiQueryParams() query: AqpDto): Promise<any> {
-    return this.bannerService.paginate(query);
+    return this.brandService.paginate(query);
   }
 
   /**
@@ -126,7 +126,7 @@ export default class BannerController {
   async findOneBy(
     @ApiQueryParams() { filter, projection }: AqpDto,
   ): Promise<any> {
-    return this.bannerService.findOneBy(filter, {
+    return this.brandService.findOneBy(filter, {
       filter,
       projection,
     });
@@ -144,7 +144,7 @@ export default class BannerController {
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
     @ApiQueryParams('population') populate: AqpDto,
   ): Promise<any> {
-    const result = await this.bannerService.findOneById(id, { populate });
+    const result = await this.brandService.findOneById(id, { populate });
 
     if (!result) throw new NotFoundException('The item does not exist');
 

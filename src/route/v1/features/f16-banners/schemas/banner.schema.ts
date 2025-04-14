@@ -15,7 +15,7 @@ export class Banner {
   @Prop({ type: Boolean, require: true, default: true })
   isShow: boolean;
 
-  @Prop({ type: String, require: true, default: '' })
+  @Prop({ type: String, require: true, default: '1' })
   posittion: string;
 }
 

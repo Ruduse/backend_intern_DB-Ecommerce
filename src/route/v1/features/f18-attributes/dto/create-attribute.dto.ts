@@ -1,29 +1,18 @@
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsEnum, IsString } from 'class-validator';
 
-export default class CreateBannerDto {
-  @IsNotEmpty()
+export enum ValueTypeEnum {
+  STRING = 'STRING',
+  NUMBER = 'NUMBER',
+  BOOLEAN = 'BOOLEAN',
+}
+
+export class CreateAttributeDto {
+  @IsString()
+  creatorId: string;
+
   @IsString()
   name: string;
 
-  @IsNotEmpty()
-  @IsString()
-  image: string;
-
-  @IsOptional()
-  @IsString()
-  link: string;
-
-  @IsOptional()
-  @IsBoolean()
-  isShow?: boolean;
-
-  @IsOptional()
-  @IsNumber()
-  posittion: string;
+  @IsEnum(ValueTypeEnum)
+  valueType: ValueTypeEnum;
 }

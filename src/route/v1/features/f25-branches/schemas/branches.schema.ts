@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-@Schema({ timestamps: true, versionKey: false, collection: 'themetypes' })
-export class Banner {
+@Schema({ timestamps: true, versionKey: false, collection: 'Branch' })
+export class Branch {
   @Prop({ type: String, require: true, default: '' })
   name: string;
 
@@ -19,5 +19,5 @@ export class Banner {
   posittion: string;
 }
 
-export type BannerDocument = Banner & Document;
-export const BannerSchema = SchemaFactory.createForClass(Banner);
+export type BranchDocument = Branch & Document;
+export const BranchSchema = SchemaFactory.createForClass(Branch);

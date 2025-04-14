@@ -1,29 +1,31 @@
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
-export default class CreateBannerDto {
+export class CreateNewsDto {
+  @IsString()
   @IsNotEmpty()
-  @IsString()
-  name: string;
+  creatorId: string;
 
+  @IsString()
   @IsNotEmpty()
+  title: string;
+
   @IsString()
-  image: string;
-
   @IsOptional()
+  thumbnail?: string;
+
   @IsString()
-  link: string;
-
   @IsOptional()
-  @IsBoolean()
-  isShow?: boolean;
+  description?: string;
 
-  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  content: string;
+
   @IsNumber()
-  posittion: string;
+  @IsOptional()
+  viewsCount?: number;
+
+  @IsString()
+  @IsNotEmpty()
+  lang: string;
 }
