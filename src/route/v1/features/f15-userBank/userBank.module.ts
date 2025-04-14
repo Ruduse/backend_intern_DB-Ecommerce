@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { UserBank, UserBankSchema } from './schemas/userBank.schema';
 import UserBankController from './userBank.controller';
 import UserBankRepository from './userBank.repository';
 import UserBankService from './userBank.service';
@@ -8,8 +9,8 @@ import UserBankService from './userBank.service';
   imports: [
     MongooseModule.forFeature([
       {
-        name: UserBankModule.name,
-        schema: UserBankService,
+        name: UserBank.name,
+        schema: UserBankSchema,
       },
     ]),
   ],

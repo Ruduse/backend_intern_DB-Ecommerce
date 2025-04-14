@@ -17,9 +17,9 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import ParseObjectIdPipe from '@pipe/parse-object-id.pipe';
 import { Types } from 'mongoose';
-import NewsService from './news.service';
-import CreateNewsDto from './dto/create-news.dto';
+import { CreateNewsDto } from './dto/create-news.dto';
 import UpdateNewsDto from './dto/update-news.dto';
+import NewsService from './news.service';
 
 @ApiTags('Newss')
 @UseInterceptors(WrapResponseInterceptor)

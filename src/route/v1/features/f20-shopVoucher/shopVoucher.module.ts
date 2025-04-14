@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { shopVoucher, ShopVoucherSchema } from './schemas/shopVoucher.schema';
 import ShopVoucherController from './shopVoucher.controller';
 import ShopVoucherRepository from './shopVoucher.repository';
 import ShopVoucherService from './shopVoucher.service';
@@ -8,8 +9,8 @@ import ShopVoucherService from './shopVoucher.service';
   imports: [
     MongooseModule.forFeature([
       {
-        name: ShopVoucherModule.name,
-        schema: ShopVoucherService,
+        name: shopVoucher.name,
+        schema: ShopVoucherSchema,
       },
     ]),
   ],

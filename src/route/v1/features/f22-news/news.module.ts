@@ -1,20 +1,21 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import UserBankController from './userBank.controller';
-import UserBankRepository from './userBank.repository';
-import UserBankService from './userBank.service';
+import NewsController from './news.controller';
+import NewsRepository from './news.repository';
+import NewsService from './news.service';
+import { News, NewsSchema } from './schemas/news.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       {
-        name: UserBankModule.name,
-        schema: UserBankService,
+        name: News.name,
+        schema: NewsSchema,
       },
     ]),
   ],
-  controllers: [UserBankController],
-  providers: [UserBankService, UserBankRepository],
-  exports: [UserBankService, UserBankRepository],
+  controllers: [NewsController],
+  providers: [NewsService, NewsRepository],
+  exports: [NewsService, NewsRepository],
 })
-export default class UserBankModule {}
+export default class NewsModule {}

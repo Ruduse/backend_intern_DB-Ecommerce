@@ -3,13 +3,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 import BranchController from './branches.controller';
 import BranchRepository from './branches.repository';
 import BranchService from './branches.service';
+import { Branch, BranchSchema } from './schemas/branches.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       {
-        name: BranchModule.name,
-        schema: BranchService,
+        name: Branch.name,
+        schema: BranchSchema,
       },
     ]),
   ],

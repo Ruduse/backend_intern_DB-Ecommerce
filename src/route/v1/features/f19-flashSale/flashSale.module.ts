@@ -3,13 +3,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 import FlashSaleController from './flashSale.controller';
 import FlashSaleRepository from './flashSale.repository';
 import FlashSaleService from './flashSale.service';
+import { FlashSale, FlashSaleSchema } from './schemas/flashSale.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       {
-        name: FlashSaleModule.name,
-        schema: FlashSaleService,
+        name: FlashSale.name,
+        schema: FlashSaleSchema,
       },
     ]),
   ],

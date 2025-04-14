@@ -1,15 +1,18 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import ConversationController from './conversation.controller';
-import ConversationRepository from './conversation.repository';
-import ConversationService from './conversation.service';
-
+import ConversationController from './conversations.controller';
+import ConversationRepository from './conversations.repository';
+import ConversationService from './conversations.service';
+import {
+  Conversation,
+  ConversationSchema,
+} from './schemas/conversations.schema';
 @Module({
   imports: [
     MongooseModule.forFeature([
       {
-        name: ConversationModule.name,
-        schema: ConversationService,
+        name: Conversation.name,
+        schema: ConversationSchema,
       },
     ]),
   ],

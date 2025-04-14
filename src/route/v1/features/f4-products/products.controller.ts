@@ -17,7 +17,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import ParseObjectIdPipe from '@pipe/parse-object-id.pipe';
 import { Types } from 'mongoose';
-import CreateProductsDto from './dto/create-products.dto';
+import { CreateProductDto } from './dto/create-products.dto';
 import { SearchProductDto } from './dto/search-products.dto'; // nhớ import nhé
 import UpdateProductsDto from './dto/update-products.dto';
 import ProductsService from './products.service';
@@ -40,7 +40,7 @@ export default class ProductsController {
 
   @Post()
   @HttpCode(201)
-  async create(@Body() body: CreateProductsDto): Promise<any> {
+  async create(@Body() body: CreateProductDto): Promise<any> {
     return this.productsService.create(body);
   }
 

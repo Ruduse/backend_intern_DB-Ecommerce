@@ -17,8 +17,8 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import ParseObjectIdPipe from '@pipe/parse-object-id.pipe';
 import { Types } from 'mongoose';
+import { CreateReviewDto } from './dto/create-review.dto';
 import ReviewService from './review.service';
-import CreateReviewDto from './dto/create-review.dto';
 import UpdateReviewDto from './dto/update-review.dto';
 
 @ApiTags('Reviews')

@@ -17,7 +17,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import ParseObjectIdPipe from '@pipe/parse-object-id.pipe';
 import { Types } from 'mongoose';
-import CreateOrdersDto from './dto/create-orders.dto';
+import { CreateOrderDto } from './dto/create-orders.dto';
 import UpdateOrdersDto from './dto/update-orders.dto';
 import OrdersService from './orders.service';
 
@@ -48,7 +48,7 @@ export default class OrdersController {
    */
   @Post('')
   @HttpCode(201)
-  async create(@Body() body: CreateOrdersDto): Promise<any> {
+  async create(@Body() body: CreateOrderDto): Promise<any> {
     const result = await this.orderService.create(body);
 
     return result;

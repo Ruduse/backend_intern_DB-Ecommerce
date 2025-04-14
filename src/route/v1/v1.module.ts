@@ -29,6 +29,30 @@ import StaticS3Module from './common/c5-static-s3/static-s3.module';
 import ProvinceModule from './common/c6-province/province.module';
 import DistrictModule from './common/c7-district/district.module';
 import VillageModule from './common/c8-village/village.module';
+import OrderItemsModule from './features/f10-order-items/order-items.module';
+import ReferralModule from './features/f12-referral/referral.module';
+import UserAdressModule from './features/f13-userAddress/userAdress.module';
+import BankModule from './features/f14-bank/bank.module';
+import UserBankModule from './features/f15-userBank/userBank.module';
+import BannerModule from './features/f16-banners/banner.module';
+import BrandModule from './features/f17-brands/brand.module';
+import AttributeModule from './features/f18-attributes/attribute.module';
+import FlashSaleModule from './features/f19-flashSale/flashSale.module';
+import CustomerModule from './features/f2-customer/customer.module';
+import ShopVoucherModule from './features/f20-shopVoucher/shopVoucher.module';
+import ReviewModule from './features/f21-review/review.module';
+import NewsModule from './features/f22-news/news.module';
+import ConversationModule from './features/f23-conversation/conversations.module';
+import MessageModule from './features/f24-messages/messages.module';
+import BranchModule from './features/f25-branches/branches.module';
+import CategoriesModule from './features/f3-categories/categories.module';
+import ShopModule from './features/f3-shop/shop.module';
+import ProductsModule from './features/f4-products/products.module';
+import SkusModule from './features/f5-skus/skus.module';
+import DiscountsModule from './features/f6-discounts/discounts.module';
+import CartsModule from './features/f7-carts/carts.module';
+import { ShippingMethod } from './features/f8-shipping-methods/schemas/shipping-methods.schema';
+import OrdersModule from './features/f9-orders/orders.module';
 
 const routes: Routes = [
   {
@@ -65,6 +89,31 @@ const routes: Routes = [
       // Features
       { path: '/cron-settings', module: CronSettingModule },
       { path: '/tests', module: TestModule },
+      { path: '/customer', module: CustomerModule },
+      { path: '/categories', module: CategoriesModule },
+      { path: '/shop', module: ShopModule },
+      { path: '/products', module: ProductsModule },
+      { path: '/skus', module: SkusModule },
+      { path: '/discounts', module: DiscountsModule },
+      { path: '/carts', module: CartsModule },
+      { path: '/shipping-method', module: ShippingMethod },
+      { path: '/orders', module: OrdersModule },
+      { path: '/order-items', module: OrderItemsModule },
+      { path: '/transaction', module: TransactionModule },
+      { path: '/referral', module: ReferralModule },
+      { path: '/userAdress', module: UserAdressModule },
+      { path: '/bank', module: BankModule },
+      { path: '/userBank', module: UserBankModule },
+      { path: '/banners', module: BannerModule },
+      { path: '/brands', module: BrandModule },
+      { path: '/attributes', module: AttributeModule },
+      { path: '/flashSale', module: FlashSaleModule },
+      { path: '/shopVoucher', module: ShopVoucherModule },
+      { path: '/review', module: ReviewModule },
+      { path: '/news', module: NewsModule },
+      { path: '/conversation', module: ConversationModule },
+      { path: '/messages', module: MessageModule },
+      { path: '/branches', module: BranchModule },
       { path: '/app-subscriptions', module: AppSubscriptionModule },
       // { path: '/notifications, module: NotificationsModule' },
     ],
@@ -110,6 +159,30 @@ const imports = [
 
   // features
   TestModule,
+  CustomerModule,
+  CategoriesModule,
+  ShopModule,
+  ProductsModule,
+  SkusModule,
+  DiscountsModule,
+  CartsModule,
+  ShippingMethod,
+  OrdersModule,
+  OrderItemsModule,
+  ReferralModule,
+  UserAdressModule,
+  BankModule,
+  UserBankModule,
+  BannerModule,
+  BrandModule,
+  AttributeModule,
+  FlashSaleModule,
+  ShopVoucherModule,
+  ReviewModule,
+  NewsModule,
+  ConversationModule,
+  MessageModule,
+  BranchModule,
   AppSubscriptionModule,
 ];
 

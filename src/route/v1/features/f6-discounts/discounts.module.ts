@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import ShopModule from '../f2-shop/shop.module';
+import ShopModule from '../f3-shop/shop.module';
 import DiscountsController from './discounts.controller';
 import DiscountsRepository from './discounts.repository';
 import DiscountsService from './discounts.service';

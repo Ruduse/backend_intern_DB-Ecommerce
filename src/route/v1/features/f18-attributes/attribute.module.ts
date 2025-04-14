@@ -3,13 +3,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 import AttributeController from './attribute.controller';
 import AttributeRepository from './attribute.repository';
 import AttributeService from './attribute.service';
+import { Attribute, AttributeSchema } from './schemas/attribute.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       {
-        name: AttributeModule.name,
-        schema: AttributeService,
+        name: Attribute.name,
+        schema: AttributeSchema,
       },
     ]),
   ],
