@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
   IsArray,
   IsDate,
@@ -17,7 +18,7 @@ export default class CreateCustomerDto {
 
   @IsOptional()
   @IsString()
-  fullName: string;
+  fullName?: string;
 
   @IsNotEmpty()
   @IsEnum(Gender)
@@ -27,55 +28,61 @@ export default class CreateCustomerDto {
   @IsString()
   avatar?: string;
 
+  @IsOptional()
   @IsNumber()
-  @IsNotEmpty()
-  point?: string;
-
-  @IsNumber()
-  @IsNotEmpty()
-  socialPhone?: number;
-
-  @IsString()
-  @IsNotEmpty()
-  socialEmail?: string;
+  points?: number;
 
   @IsNumber()
   @IsNotEmpty()
-  contactPhone?: number;
+  socialPhone: number;
 
   @IsString()
   @IsNotEmpty()
-  contactEmail?: string;
+  socialEmail: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  contactPhone: number;
 
   @IsString()
   @IsNotEmpty()
-  ReferralId?: string;
+  contactEmail: string;
 
+  // Giả sử ReferralId bắt buộc:
   @IsString()
   @IsNotEmpty()
+  ReferralId: string;
+
+  @IsOptional()
+  @IsString()
   myShareCode?: string;
 
+  // Giả sử sharedCodeFrom bắt buộc:
   @IsString()
   @IsNotEmpty()
-  sharedCodeFrom?: string;
+  sharedCodeFrom: string;
 
-  @IsDate()
   @IsNotEmpty()
-  dateOfBirth?: Date;
+  @IsDate()
+  @Transform(({ value }) => new Date(value))
+  dateOfBirth: Date;
 
   @IsNumber()
   @IsNotEmpty()
-  balance?: number;
+  balance: number;
 
   @IsArray()
   @IsOptional()
-  savedProductIds: String[];
+  @IsString({ each: true })
+  savedProductIds: string[] = [];
 
   @IsArray()
   @IsOptional()
-  shopVoucherIds: String[];
+  @IsString({ each: true })
+  shopVoucherIds?: string[];
 
   @IsArray()
   @IsOptional()
-  usedShopVoucherIds: String[];
+  @IsString({ each: true })
+  usedShopVoucherIds?: string[];
 }

@@ -50,11 +50,16 @@ export default class CustomerController {
   @Post('')
   @HttpCode(201)
   async create(@Body() body: CreateCustomerDto): Promise<any> {
+    // Chuyển đổi dateOfBirth từ chuỗi thành đối tượng Date
+    body.dateOfBirth = new Date(body.dateOfBirth);
+
+    // Tiến hành xử lý tiếp theo, ví dụ lưu vào cơ sở dữ liệu
     const result = await this.customerService.create(body);
 
     return result;
   }
-
+  /**
+     
   /**
    * Update by ID
    *

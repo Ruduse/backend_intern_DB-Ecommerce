@@ -13,7 +13,9 @@ export default class CreateDistrictDto {
   @IsOptional()
   @IsString()
   readonly slug: string;
-
+    @IsOptional()
+    @IsString()
+    readonly type: string;
   @IsOptional()
   @IsNumber()
   position: number;

@@ -53,13 +53,13 @@ export default class CreateShopDto {
 
   @IsOptional()
   @IsNumber()
-  totalRating?: number;
+  totalRatings?: number;
 
   @IsOptional()
   @IsNumber()
-  totalReview?: number;
+  totalReviews?: number;
 
   @IsOptional()
   @IsNumber()
-  totalProduct?: number;
+  totalProducts?: number;
 }
