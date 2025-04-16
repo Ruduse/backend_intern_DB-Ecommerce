@@ -21,8 +21,8 @@ export class Product {
   @Prop({ type: [String], default: [] })
   images: string[];
 
-  @Prop({ type: String, default: [] })
-  video: string;
+  @Prop({ type: [String], default: [] })
+  video: string[];
   @Prop({ type: [String], required: true, default: [] })
   warranties: string[];
 
@@ -47,8 +47,8 @@ export class Product {
   @Prop({ type: Boolean, required: true, default: false })
   isNew: boolean;
 
-  @Prop({ type: Number, required: true })
-  isRewardPoint: number;
+  @Prop({ type: Boolean, required: true })
+  isRewardPoint: boolean;
 
   @Prop({ type: Boolean, required: true, default: true })
   isActive: boolean;
@@ -59,8 +59,8 @@ export class Product {
   @Prop({ type: String, required: true })
   skuMax: string;
 
-  @Prop({ type: String, default: true })
-  skuIds: string;
+  @Prop({ type: [String], default: [] })
+  skuIds: string[];
 
   @Prop({ type: String, ref: 'Shop', required: true })
   shopId: string;

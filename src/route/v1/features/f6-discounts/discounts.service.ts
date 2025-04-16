@@ -1,15 +1,55 @@
 import BaseService from '@base-inherit/base.service';
+import NotificationService from '@common/c12-notification/notification.service';
 import CustomLoggerService from '@lazy-module/logger/logger.service';
 import { Injectable } from '@nestjs/common';
 import DiscountsRepository from './discounts.repository';
-import { DiscountDocument } from './schemas/discounts.schema';
+import { CreateDiscountDto } from './dto/create-discounts.dto';
+import { Discount, DiscountDocument } from './schemas/discounts.schema';
 
 @Injectable()
 export default class DiscountsService extends BaseService<DiscountDocument> {
   constructor(
     readonly logger: CustomLoggerService,
-    readonly testRepository: DiscountsRepository,
+    readonly discountRepository: DiscountsRepository,
+    private readonly notificationService: NotificationService,
   ) {
-    super(logger, testRepository);
+    super(logger, discountRepository);
+  }
+
+  // Tạo mới discount và gửi thông báo nếu cần
+  async create(createDiscountDto: CreateDiscountDto): Promise<Discount> {
+    // Kiểm tra nếu đã có discount nào có isSendNotification: true
+    if (createDiscountDto.isSendNotification) {
+      const existingDiscount = await this.discountRepository.findOneBy({
+        isSendNotification: true,
+      });
+
+      if (existingDiscount) {
+        throw new Error(
+          'There is already a discount with notification enabled.',
+        );
+      }
+    }
+
+    // Tạo mới discount
+    const newDiscount = await this.discountRepository.create(createDiscountDto);
+
+    // Nếu cần gửi thông báo
+    if (createDiscountDto.isSendNotification) {
+      await this.sendNotificationToAllUsers(newDiscount);
+    }
+
+    return newDiscount;
+  }
+
+  // Gửi thông báo đến tất cả người dùng
+  private async sendNotificationToAllUsers(discount: Discount): Promise<void> {
+    this.logger.log(`Gửi bạn mã discount mới của chúng tôi: ${discount.code}`);
+
+    await this.notificationService.sendToAllUsers({
+      title: 'Discount mới đã có!',
+      message: `Discount mới đã có sẵn: ${discount.code}. Sử dụng nó ngay!`,
+      discountCode: discount.code,
+    });
   }
 }

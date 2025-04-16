@@ -7,7 +7,7 @@ export class Province {
   name: string;
 
   @Prop({ type: String })
-  type: string;
+  type?: string;
 
   @Prop({ type: String })
   slug: string;

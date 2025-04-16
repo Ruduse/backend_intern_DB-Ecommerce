@@ -11,7 +11,7 @@ export default class CreateProvinceDto {
 
   @IsOptional()
   @IsString()
-  readonly type: string;
+  readonly type?: string;
 
   @IsOptional()
   @IsNumber()

@@ -8,7 +8,7 @@ export class District {
     ref: 'Province',
     required: true,
   })
-  idProvince: string;
+  ProvinceId: string;
 
   @Prop({ type: String, required: true })
   name: string;

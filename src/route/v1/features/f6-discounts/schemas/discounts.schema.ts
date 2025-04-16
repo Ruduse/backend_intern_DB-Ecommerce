@@ -29,11 +29,11 @@ export class Discount {
   @Prop({ type: Date, required: true })
   validFrom: Date;
 
-  @Prop({ type: String, ref: 'Shop', required: true })
-  validTo: string;
+  @Prop({ type: Date, ref: 'Shop', required: true })
+  validTo: Date;
 
-  @Prop({ type: String, required: true, unique: true })
-  maxUses: string;
+  @Prop({ type: Number, required: true }) //unique: true
+  maxUses: number;
 
   @Prop({ type: String, required: true, enum: ['percentage', 'fixed'] })
   usersUsed: string;
@@ -47,8 +47,8 @@ export class Discount {
   @Prop({ type: Number, required: false })
   isActive: number;
 
-  @Prop({ type: Date, required: true })
-  applyTo: Date;
+  @Prop({ type: String, required: true, enum: ['ALL', 'SPECIFIC'] })
+  applyTo: String;
 
   @Prop({ type: Date, required: true })
   productIds: Date;
@@ -56,8 +56,8 @@ export class Discount {
   @Prop({ type: String, ref: 'Shop', required: true })
   skuIds: string;
 
-  @Prop({ type: String, required: true, unique: true })
-  isSendNotification: string;
+  @Prop({ type: Boolean, required: true, default: true })
+  isSendNotification: boolean;
 
   @Prop({ type: String, required: true, enum: ['percentage', 'fixed'] })
   nameEn: string;

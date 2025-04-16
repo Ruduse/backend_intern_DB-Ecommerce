@@ -12,8 +12,8 @@ export class Cart {
     type: [
       {
         productId: { type: String, ref: 'Product', required: true },
-        skuId: { type: String, ref: 'sku', required: true },
-        discountId: { type: String, ref: 'discount', required: false },
+        skuId: { type: String, ref: 'Sku', required: true },
+        discountId: { type: String, ref: 'Discount', required: false },
         quantity: { type: Number, required: true, min: 1 },
       },
     ],

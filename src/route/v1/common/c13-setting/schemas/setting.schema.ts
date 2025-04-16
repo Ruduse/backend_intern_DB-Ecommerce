@@ -5,40 +5,43 @@ import { StatisticLocked } from '../enum/statistic-locked.enum';
 @Schema({ timestamps: true, versionKey: false })
 export class Setting {
   @Prop({ type: [Number], default: [] })
-  readonly appShowRate: number[];
+  appShowRate: number[];
 
   @Prop({ type: [Number], default: [] })
-  readonly saveFileShowRate: number[];
+  saveFileShowRate: number[];
 
   @Prop({ type: String, default: '' })
-  readonly privacyPolicy: string;
+  privacyPolicy: string;
 
   @Prop({ type: String, default: '' })
-  readonly termsAndService: string;
+  termsAndService: string;
 
   @Prop({ type: String, default: '' })
-  readonly androidAppId: string;
+  androidAppId: string;
 
   @Prop({ type: String, default: '' })
-  readonly iOSAppId: string;
+  iOSAppId: string;
 
   @Prop({ type: String, default: '' })
-  readonly linkShareAndroid: string;
+  linkShareAndroid: string;
 
   @Prop({ type: String, default: '' })
-  readonly linkShareIos: string;
+  linkShareIos: string;
 
   @Prop({ type: Number, default: 2 })
-  readonly quantityAdsPerDay: number;
+  quantityAdsPerDay: number;
 
   @Prop({ type: mongoose.SchemaTypes.Mixed, default: {} })
-  readonly other: any;
+  other: any;
 
   @Prop({ type: Number, default: 0 })
   premiumTrialDays: number;
 
   @Prop({ type: String, default: '' })
   contactEmail: string;
+
+  @Prop({ type: String, default: '' })
+  contactPhone: string;
 
   @Prop({ type: String, default: '' })
   logo: string;
@@ -51,6 +54,51 @@ export class Setting {
 
   @Prop({ type: String, default: '' })
   themeDefaultId: string;
+
+  @Prop({ type: String, default: '' })
+  websiteLink: string;
+
+  @Prop({ type: String, default: '' })
+  facebookLink: string;
+
+  @Prop({ type: String, default: '' })
+  address: string;
+
+  @Prop({ type: String, default: '' })
+  returnPolicy: string;
+
+  @Prop({ type: String, default: '' })
+  purchasePolicy: string;
+
+  @Prop({ type: String, default: '' })
+  warrantyPolicy: string;
+
+  @Prop({ type: String, default: '' })
+  buyingGuide: string;
+
+  @Prop({ type: String, default: '' })
+  transferInformation: string;
+
+  @Prop({ type: String, default: '' })
+  referralPrice: string;
+
+  @Prop({ type: String, default: '' })
+  privacyPolicyEn: string;
+
+  @Prop({ type: String, default: '' })
+  returnPolicyEn: string;
+
+  @Prop({ type: String, default: '' })
+  purchasePolicyEn: string;
+
+  @Prop({ type: String, default: '' })
+  warrantyPolicyEn: string;
+
+  @Prop({ type: String, default: '' })
+  buyingGuideEn: string;
+
+  @Prop({ type: String, default: '' })
+  transferInformationEn: string;
 }
 
 export type SettingDocument = Setting & Document;

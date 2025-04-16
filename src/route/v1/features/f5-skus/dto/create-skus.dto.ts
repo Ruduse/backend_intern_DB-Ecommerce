@@ -16,7 +16,7 @@ export default class CreateSkuDto {
   @IsNotEmpty()
   productId: string;
 
-  @IsMongoId()
+  @IsString()
   @IsNotEmpty()
   skuCode: string;
 

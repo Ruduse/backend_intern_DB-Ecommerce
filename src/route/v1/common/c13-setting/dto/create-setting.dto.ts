@@ -7,68 +7,134 @@ import {
 } from 'class-validator';
 import { StatisticLocked } from '../enum/statistic-locked.enum';
 
-export default class CreateSettingDto {
+export class CreateSettingDto {
+  @IsOptional()
   @IsArray()
   @IsNumber({}, { each: true })
-  readonly appShowRate: [];
+  readonly appShowRate?: number[];
 
   @IsOptional()
-  @IsString()
-  readonly androidAppId: string;
-
-  @IsOptional()
-  @IsString()
-  readonly iOSAppId: string;
-
-  @IsOptional()
-  @IsString()
-  readonly linkShareAndroid: string;
-
-  @IsOptional()
-  @IsString()
-  readonly linkShareIos: string;
-
   @IsArray()
   @IsNumber({}, { each: true })
-  readonly saveFileShowRate: [];
+  readonly saveFileShowRate?: number[];
 
   @IsOptional()
   @IsString()
-  readonly privacyPolicy: string;
+  readonly privacyPolicy?: string;
 
   @IsOptional()
   @IsString()
-  readonly termsAndService: string;
+  readonly termsAndService?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly androidAppId?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly iOSAppId?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly linkShareAndroid?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly linkShareIos?: string;
 
   @IsOptional()
   @IsNumber()
-  readonly quantityAdsPerDay: number;
+  readonly quantityAdsPerDay?: number;
 
   @IsOptional()
-  readonly other: any;
+  readonly other?: any;
 
   @IsOptional()
   @IsNumber()
-  premiumTrialDays: number;
+  readonly premiumTrialDays?: number;
 
   @IsOptional()
   @IsString()
-  contactEmail: string;
+  readonly contactEmail?: string;
 
   @IsOptional()
   @IsString()
-  logo: string;
+  readonly contactPhone?: string;
 
   @IsOptional()
   @IsString()
-  appName: string;
+  readonly logo?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly appName?: string;
 
   @IsOptional()
   @IsArray()
   @IsEnum(StatisticLocked, { each: true })
-  statisticsIsLocked: StatisticLocked[];
+  readonly statisticsIsLocked?: StatisticLocked[];
 
   @IsOptional()
   @IsString()
-  themeDefaultId: string;
+  readonly themeDefaultId?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly websiteLink?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly facebookLink?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly address?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly returnPolicy?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly purchasePolicy?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly warrantyPolicy?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly buyingGuide?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly transferInformation?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly referralPrice?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly privacyPolicyEn?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly returnPolicyEn?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly purchasePolicyEn?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly warrantyPolicyEn?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly buyingGuideEn?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly transferInformationEn?: string;
 }

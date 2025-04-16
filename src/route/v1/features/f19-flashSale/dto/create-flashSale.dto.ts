@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
@@ -8,9 +9,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { each } from 'lodash';
 import { FlashSaleProductDto } from './flash-sale-product.dto';
-import { Type } from 'class-transformer';
 
 export default class CreateFlashSaleDto {
   @IsNotEmpty()

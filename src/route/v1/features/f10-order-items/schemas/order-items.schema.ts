@@ -10,7 +10,7 @@ export class OrderItem {
 
   @Prop({ type: String, ref: 'Product', required: true })
   productId: string;
-  @Prop({ type: String, ref: 'Sku', required: true })
+  @Prop({ type: String, ref: 'Sku', required: true, unique: true })
   skuId: string;
 
   @Prop({ type: String, ref: 'Discount', required: true })

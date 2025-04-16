@@ -28,6 +28,7 @@ import UpdateCartsDto from './dto/update-carts.dto';
 export default class CartsController {
   constructor(private readonly cartService: CartsService) {}
   @Post('add')
+
   async addToCart(
     @Query('userId') userId: string,
     @Body() addToCartDto: AddToCartDto,
@@ -36,6 +37,7 @@ export default class CartsController {
   }
 
   @Get()
+
   async getCart(@Query('userId') userId: string) {
     return this.cartService.getCart(userId);
   }

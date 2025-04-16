@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
   IsDate,
   IsMongoId,
@@ -38,6 +39,7 @@ export default class CreateBankDto {
 
   @IsNotEmpty()
   @IsDate()
+  @Transform(({ value }) => new Date(value)) // Chuyển đổi chuỗi thành Date
   expirationDate: Date;
 
   @IsNotEmpty()

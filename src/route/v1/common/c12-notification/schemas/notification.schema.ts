@@ -42,9 +42,6 @@ export class Notification {
     [key: string]: string;
   };
 
-  @Prop({ type: Boolean, default: false })
-  isOpened: boolean;
-
   @Prop({
     type: Object,
     default: {
@@ -59,10 +56,22 @@ export class Notification {
   };
 
   @Prop({ type: String, default: '' })
+  titleEn: string;
+
+  @Prop({ type: String, default: '' })
+  descriptionEn: string;
+
+  @Prop({ type: Boolean, default: false })
+  isOpened: boolean;
+
+  @Prop({ type: String, default: '' })
   thumbnail: string;
 
   @Prop({ type: String, enum: ThumbnailType })
   readonly thumbnailType: ThumbnailType;
+
+  @Prop({ type: Object, default: {} })
+  options: Record<string, any>;
 }
 
 export type NotificationDocument = HydratedDocument<Notification>;

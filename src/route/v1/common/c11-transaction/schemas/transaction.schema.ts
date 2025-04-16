@@ -3,6 +3,7 @@ import { Document } from 'mongoose';
 import { TransactionMethodEnum } from '../enums/transaction-method.enum';
 import { TransactionStatusEnum } from '../enums/transaction-status.enum';
 import { TransactionTypeEnum } from '../enums/transaction-type.enum';
+import { UserBank, UserBankSchema } from './user-bank.schema';
 
 export interface MultipleLanguage {
   [key: string]: string;
@@ -11,43 +12,49 @@ export interface MultipleLanguage {
 @Schema({ timestamps: true, versionKey: false })
 export class Transaction {
   @Prop({ type: String, ref: 'User' })
-  readonly userId: string;
+  readonly userFrom: string;
 
-  @Prop({ type: String })
-  readonly entityId: string;
+  @Prop({ type: String, ref: 'User', required: true })
+  readonly userTo: string;
 
   @Prop({
     type: String,
     enum: TransactionTypeEnum,
-    default: TransactionTypeEnum.COMPLETED_MISSION,
+    default: TransactionTypeEnum.recharge,
   })
   readonly type: TransactionTypeEnum;
 
   @Prop({
     type: String,
     enum: TransactionMethodEnum,
-    default: TransactionMethodEnum.MONEY,
+    default: TransactionMethodEnum.tranfer,
   })
   readonly method: TransactionMethodEnum;
 
   @Prop({
     type: String,
     enum: TransactionStatusEnum,
-    default: TransactionStatusEnum.CHECKING,
+    default: TransactionStatusEnum.pending,
   })
   readonly status: TransactionStatusEnum;
 
   @Prop({ type: Number, default: 0 })
   readonly clovers: number;
 
+  @Prop({ type: String, default: '' })
+  readonly tittle: string;
+
   @Prop({ type: Number, default: 0 })
   readonly money: number;
 
   @Prop({ type: String, default: '' })
-  readonly options: string;
+  readonly image: string;
 
   @Prop({ type: String, default: '' })
-  readonly transactionCode: string;
+  readonly content: string;
+
+  @Prop({ type: UserBankSchema, default: '' })
+  readonly userBankReceived: UserBank;
 }
 
 export type TransactionDocument = Transaction & Document;

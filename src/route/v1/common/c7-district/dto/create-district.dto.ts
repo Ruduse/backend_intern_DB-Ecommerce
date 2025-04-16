@@ -4,7 +4,7 @@ import { Types } from 'mongoose';
 export default class CreateDistrictDto {
   @IsOptional()
   @IsMongoId()
-  readonly idProvince: Types.ObjectId;
+  readonly ProvinceId: Types.ObjectId;
 
   @IsOptional()
   @IsString()
@@ -13,9 +13,11 @@ export default class CreateDistrictDto {
   @IsOptional()
   @IsString()
   readonly slug: string;
-    @IsOptional()
-    @IsString()
-    readonly type: string;
+
+  @IsOptional()
+  @IsString()
+  readonly type: string;
+
   @IsOptional()
   @IsNumber()
   position: number;

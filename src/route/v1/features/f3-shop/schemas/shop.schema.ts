@@ -21,7 +21,11 @@ export class Shop {
   @Prop({ type: String, default: '' })
   SocialMail: string;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Province', required: true })
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'Province',
+    required: true,
+  })
   provinceId: MongooseSchema.Types.ObjectId;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'District' })

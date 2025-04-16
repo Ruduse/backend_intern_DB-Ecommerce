@@ -37,8 +37,8 @@ export default class CreateNotificationDto {
   };
 
   @IsOptional()
-  @IsBoolean()
-  isOpened: boolean;
+  @IsString()
+  titleEn: string;
 
   @IsOptional()
   description: {
@@ -47,9 +47,20 @@ export default class CreateNotificationDto {
 
   @IsOptional()
   @IsString()
+  descriptionEn: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isOpened: boolean;
+
+  @IsOptional()
+  @IsString()
   thumbnail: string;
 
   @IsOptional()
   @IsEnum(ThumbnailType)
   readonly thumbnailType: ThumbnailType;
+
+  @IsOptional()
+  options: Record<string, any>;
 }

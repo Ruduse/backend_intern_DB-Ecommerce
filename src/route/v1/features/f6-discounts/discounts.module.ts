@@ -1,3 +1,5 @@
+import NotificationModule from '@common/c12-notification/notification.module';
+import NotificationService from '@common/c12-notification/notification.service';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import ShopModule from '../f3-shop/shop.module';
@@ -15,9 +17,10 @@ import { Discount, DiscountsSchema } from './schemas/discounts.schema';
       },
     ]),
     ShopModule,
+    NotificationModule,
   ],
   controllers: [DiscountsController],
-  providers: [DiscountsService, DiscountsRepository],
+  providers: [DiscountsService, DiscountsRepository, NotificationService],
   exports: [DiscountsService, DiscountsRepository],
 })
 export default class DiscountsModule {}

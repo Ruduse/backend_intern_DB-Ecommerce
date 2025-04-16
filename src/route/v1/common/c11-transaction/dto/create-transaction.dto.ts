@@ -1,48 +1,55 @@
+import { Type } from 'class-transformer';
 import {
   IsEnum,
-  IsMongoId,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
+  ValidateNested,
 } from 'class-validator';
+import { TransactionTypeEnum } from '../enums/transaction-type.enum';
+import { CreateUserBankDto } from './create-user-bank.dto';
 import { TransactionMethodEnum } from '../enums/transaction-method.enum';
 import { TransactionStatusEnum } from '../enums/transaction-status.enum';
-import { TransactionTypeEnum } from '../enums/transaction-type.enum';
 export default class CreateTransactionDto {
   @IsNotEmpty()
-  @IsMongoId()
-  userId: string;
+  @IsString()
+  userFrom: string;
 
-  @IsOptional()
-  @IsMongoId()
-  entityId: string;
+  @IsNotEmpty()
+  @IsString()
+  userTo: string;
 
-  @IsOptional()
-  @IsEnum(TransactionTypeEnum)
-  type: TransactionTypeEnum;
-
-  @IsOptional()
+  @IsNotEmpty()
   @IsEnum(TransactionMethodEnum)
   method: TransactionMethodEnum;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsEnum(TransactionStatusEnum)
   status: TransactionStatusEnum;
 
-  @IsOptional()
-  @IsNumber()
-  clovers: number;
+  @IsNotEmpty()
+  @IsEnum(TransactionTypeEnum)
+  transactionType: TransactionTypeEnum;
 
-  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  title: string;
+
+  @IsNotEmpty()
   @IsNumber()
   money: number;
 
   @IsOptional()
   @IsString()
-  options: string;
+  image?: string;
 
   @IsOptional()
   @IsString()
-  transactionCode: string;
+  content?: string;
+
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => CreateUserBankDto)
+  userBankReceived: CreateUserBankDto;
 }

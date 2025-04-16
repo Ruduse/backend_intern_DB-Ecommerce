@@ -17,13 +17,12 @@ export default class CreateBannerDto {
 
   @IsOptional()
   @IsString()
-  link: string;
-
+  link?: string;
   @IsOptional()
   @IsBoolean()
   isShow?: boolean;
 
   @IsOptional()
   @IsNumber()
-  posittion: string;
+  posittion?: number;
 }

@@ -1,43 +1,113 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsArray,
+  IsBoolean,
   IsDateString,
   IsEnum,
+  IsMongoId,
+  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
-  Min,
 } from 'class-validator';
 
-export enum DiscountType {
+export enum DiscountEnum {
   PERCENTAGE = 'percentage',
   FIXED = 'fixed',
 }
-
+export enum DiscountApplyToEnum {
+  ALL = 'ALL',
+  SPECIFIC = 'SPECIFIC',
+}
 export class CreateDiscountDto {
-  @IsString()
-  shopId: string;
+  @IsMongoId()
+  @IsNotEmpty()
+  creatorId: string;
 
+  @ApiProperty({
+    description: 'Mã giảm giá',
+  })
   @IsString()
+  @IsNotEmpty()
   code: string;
 
-  @IsEnum(DiscountType)
-  discountType: DiscountType;
+  @IsArray()
+  @IsString({ each: true })
+  image: string[];
 
   @IsNumber()
-  @Min(0)
-  discountValue: number;
+  @IsNotEmpty()
+  name: number;
+
+  @IsString()
+  @IsNotEmpty()
+  description: string;
+
+  @IsOptional()
+  @IsNumber()
+  discountType?: number;
+
+  @IsDateString()
+  @IsNotEmpty()
+  discountValue: string;
+
+  @IsDateString()
+  @IsNotEmpty()
+  validFrom: string;
+
+  @IsDateString()
+  @IsNotEmpty()
+  validTo: string;
 
   @IsNumber()
-  @Min(0)
+  @IsNotEmpty()
+  maxUses: number;
+
+  @IsEnum(DiscountEnum)
+  @IsNotEmpty()
+  usersUsed: DiscountEnum;
+
+  @IsNumber()
+  @IsNotEmpty()
+  maxUsesPerUser: number;
+
+  @IsNumber()
+  @IsNotEmpty()
   minOrderValue: number;
 
-  @IsNumber()
-  @Min(0)
   @IsOptional()
-  maxDiscount?: number;
+  @IsNumber()
+  isActive?: number;
+
+  @IsNotEmpty()
+  @IsEnum(DiscountApplyToEnum)
+  applyTo: DiscountApplyToEnum;
 
   @IsDateString()
-  startDate: string;
+  @IsNotEmpty()
+  productIds: string;
 
-  @IsDateString()
-  endDate: string;
+  @IsString()
+  @IsNotEmpty()
+  skuIds: string;
+
+  @ApiProperty({
+    description: 'Có gửi thông báo đến tất cả người dùng hay không',
+    default: true,
+  })
+  @IsBoolean()
+  @IsNotEmpty()
+  isSendNotification: boolean;
+
+  @IsEnum(DiscountEnum)
+  @IsNotEmpty()
+  nameEn: DiscountEnum;
+
+  @IsNumber()
+  @IsNotEmpty()
+  descriptionEn: number;
+
+  @IsOptional()
+  @IsNumber()
+  bulkDiscount?: number;
 }

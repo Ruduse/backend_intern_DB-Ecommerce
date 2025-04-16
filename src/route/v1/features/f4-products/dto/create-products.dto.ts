@@ -35,9 +35,9 @@ export class CreateProductDto {
   @IsString({ each: true })
   images?: string[];
 
+  @IsArray()
   @IsOptional()
-  @IsString()
-  video?: string;
+  video: string[];
 
   @IsOptional()
   @IsArray()
