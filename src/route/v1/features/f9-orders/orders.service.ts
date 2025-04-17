@@ -22,8 +22,9 @@ export default class OrdersService extends BaseService<OrderDocument> {
     super(logger, ordersRepository);
   }
 
+  // Tạo đơn hàng mới
   async createOrder(userId: string, dto: CreateOrderDto): Promise<Order> {
-    this.logger.log('Creating new order', { userId, ...dto });
+    this.logger.log('Tạo đơn hàng mới', { userId, ...dto });
 
     const newOrder = {
       ...dto,
@@ -36,6 +37,7 @@ export default class OrdersService extends BaseService<OrderDocument> {
     return this.ordersRepository.create(newOrder);
   }
 
+  // Lấy tất cả đơn hàng (không phân biệt người dùng)
   async getAllOrders(dto: GetMyOrdersDto): Promise<Order[]> {
     const filter: any = {};
 
@@ -46,6 +48,7 @@ export default class OrdersService extends BaseService<OrderDocument> {
     return this.ordersRepository.findManyBy(filter);
   }
 
+  // Lấy các đơn hàng của người dùng hiện tại
   async getMyOrders(userId: string, dto: GetMyOrdersDto): Promise<Order[]> {
     const filter: any = { orderBy: userId };
 
@@ -56,6 +59,7 @@ export default class OrdersService extends BaseService<OrderDocument> {
     return this.ordersRepository.findManyBy(filter);
   }
 
+  // Lấy thông tin đơn hàng cụ thể của người dùng
   async getMyOrderById(userId: string, orderId: string): Promise<Order> {
     const order = await this.ordersRepository.findOneBy({
       _id: orderId,
@@ -63,13 +67,14 @@ export default class OrdersService extends BaseService<OrderDocument> {
     });
 
     if (!order) {
-      this.logger.warn('Order not found', { userId, orderId });
-      throw new NotFoundException('Order not found');
+      this.logger.warn('Không tìm thấy đơn hàng', { userId, orderId });
+      throw new NotFoundException('Không tìm thấy đơn hàng');
     }
 
     return order;
   }
 
+  // Cập nhật đơn hàng của người dùng
   async updateOrder(
     userId: string,
     orderId: string,
@@ -82,11 +87,12 @@ export default class OrdersService extends BaseService<OrderDocument> {
       updatedAt: new Date(),
     };
 
-    this.logger.log('Updating order', { orderId, ...dto });
+    this.logger.log('Cập nhật đơn hàng', { orderId, ...dto });
 
     return this.ordersRepository.updateOneById(orderId, updated);
   }
 
+  // Cập nhật trạng thái đơn hàng
   async updateOrderStatus(
     userId: string,
     orderId: string,
@@ -99,7 +105,7 @@ export default class OrdersService extends BaseService<OrderDocument> {
       updatedAt: new Date(),
     };
 
-    this.logger.log('Updating order status', {
+    this.logger.log('Cập nhật trạng thái đơn hàng', {
       orderId,
       oldStatus: order.status,
       newStatus: orderStatus,
@@ -108,16 +114,19 @@ export default class OrdersService extends BaseService<OrderDocument> {
     return this.ordersRepository.updateOneById(orderId, updated);
   }
 
+  // Hủy đơn hàng
   async cancelOrder(userId: string, orderId: string): Promise<Order> {
     const order = await this.getMyOrderById(userId, orderId);
     const allowedStatuses = [status.waiting, status.confirm];
 
     if (!allowedStatuses.includes(order.status as status)) {
-      this.logger.warn('Cannot cancel order in current status', {
+      this.logger.warn('Không thể hủy đơn hàng ở trạng thái hiện tại', {
         orderId,
         status: order.status,
       });
-      throw new ForbiddenException('Cannot cancel order in current status');
+      throw new ForbiddenException(
+        'Không thể hủy đơn hàng ở trạng thái hiện tại',
+      );
     }
 
     const updated = {
@@ -125,11 +134,12 @@ export default class OrdersService extends BaseService<OrderDocument> {
       updatedAt: new Date(),
     };
 
-    this.logger.log('Cancelling order', { orderId, oldStatus: order.status });
+    this.logger.log('Hủy đơn hàng', { orderId, oldStatus: order.status });
 
     return this.ordersRepository.updateOneById(orderId, updated);
   }
 
+  // Yêu cầu hoàn tiền
   async requestRefund(
     userId: string,
     orderId: string,
@@ -138,12 +148,15 @@ export default class OrdersService extends BaseService<OrderDocument> {
     const order = await this.getMyOrderById(userId, orderId);
 
     if (order.status !== status.success) {
-      this.logger.warn('Can only request refund for delivered orders', {
-        orderId,
-        status: order.status,
-      });
+      this.logger.warn(
+        'Chỉ có thể yêu cầu hoàn tiền cho đơn hàng đã giao thành công',
+        {
+          orderId,
+          status: order.status,
+        },
+      );
       throw new ForbiddenException(
-        'Can only request refund for delivered orders',
+        'Chỉ có thể yêu cầu hoàn tiền cho đơn hàng đã giao thành công',
       );
     }
 
@@ -153,11 +166,12 @@ export default class OrdersService extends BaseService<OrderDocument> {
       updatedAt: new Date(),
     };
 
-    this.logger.log('Requesting refund', { orderId, reason });
+    this.logger.log('Yêu cầu hoàn tiền', { orderId, reason });
 
     return this.ordersRepository.updateOneById(orderId, updated);
   }
 
+  // Thống kê số lượng đơn hàng theo trạng thái
   async getOrderCounts(userId: string): Promise<Record<status, number>> {
     const counts: Record<status, number> = {
       [status.waiting]: 0,

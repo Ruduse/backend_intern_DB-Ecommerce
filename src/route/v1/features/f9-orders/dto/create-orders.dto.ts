@@ -85,9 +85,10 @@ class StatusHistoryDto {
 }
 
 export class CreateOrderDto {
-  @IsString()
-  @IsNotEmpty()
-  orderBy: string;
+  //Không cần validate ở đây vì controller đã lấy từ header
+  // @IsNotEmpty()
+  // @IsString()
+  // orderBy: string;
 
   @IsString()
   @IsNotEmpty()
