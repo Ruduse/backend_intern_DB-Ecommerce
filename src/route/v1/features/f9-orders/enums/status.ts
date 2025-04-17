@@ -1,8 +1,8 @@
 export enum status {
-  WAITING = 'WAITING',
-  CONFIRM = 'CONFIRM',
-  DELIVERY = 'DELIVERY',
-  SUCCESS = 'SUCCESS',
-  CANCEL = 'CANCEL',
-  REFUND = 'REFUND',
+  waiting = 'WAITING',
+  confirm = 'CONFIRM',
+  delivery = 'DELIVERY',
+  success = 'SUCCESS',
+  cancel = 'CANCEL',
+  refund = 'REFUND',
 }

@@ -1,153 +1,108 @@
-import { ApiQueryParams } from '@decorator/api-query-params.decorator';
-import AqpDto from '@interceptor/aqp/aqp.dto';
-import WrapResponseInterceptor from '@interceptor/wrap-response.interceptor';
 import {
   Body,
   Controller,
-  Delete,
   Get,
+  Headers,
   HttpCode,
-  NotFoundException,
   Param,
   Post,
   Put,
   Query,
-  UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import ParseObjectIdPipe from '@pipe/parse-object-id.pipe';
 import { Types } from 'mongoose';
+
 import { CreateOrderDto } from './dto/create-orders.dto';
+import { GetMyOrdersDto } from './dto/get-my-orders.dto';
 import UpdateOrdersDto from './dto/update-orders.dto';
+import { status } from './enums/status';
 import OrdersService from './orders.service';
 
 @ApiTags('Orders')
-@UseInterceptors(WrapResponseInterceptor)
 @Controller()
 export default class OrdersController {
-  constructor(private readonly orderService: OrdersService) {}
+  constructor(private readonly ordersService: OrdersService) {}
 
-  /**
-   * Find all
-   *
-   * @param query
-   * @returns
-   */
-  @Get('')
-  @HttpCode(200)
-  async findAll(@Query() query: any): Promise<any> {
-    const result = await this.orderService.findManyBy(query);
-    return result;
-  }
-
-  /**
-   * Create
-   *
-   * @param body
-   * @returns
-   */
-  @Post('')
+  @Post()
   @HttpCode(201)
-  async create(@Body() body: CreateOrderDto): Promise<any> {
-    const result = await this.orderService.create(body);
-
-    return result;
+  async createOrder(
+    @Headers('authorization-userid') userId: string,
+    @Body() dto: CreateOrderDto,
+  ) {
+    return this.ordersService.createOrder(userId, dto);
   }
 
-  /**
-   * Update by ID
-   *
-   * @param id
-   * @param body
-   * @returns
-   */
-  @Put(':id')
+  @Get()
   @HttpCode(200)
-  async update(
-    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
-    @Body() body: UpdateOrdersDto,
-  ): Promise<any> {
-    const result = await this.orderService.updateOneById(id, body);
-
-    return result;
+  async getAllOrders(@Query() query: GetMyOrdersDto) {
+    return this.ordersService.getAllOrders(query);
   }
 
-  /**
-   * Delete hard many by ids
-   *
-   * @param ids
-   * @returns
-   */
-  @Delete(':ids/ids')
-  // @HttpCode(204)
-  async deleteManyByIds(@Param('ids') ids: string): Promise<any> {
-    const result = await this.orderService.deleteManyHardByIds(
-      ids.split(',').map((item: any) => new Types.ObjectId(item)),
+  @Get('my')
+  @HttpCode(200)
+  async getMyOrders(
+    @Headers('authorization-userid') userId: string,
+    @Query() query: GetMyOrdersDto,
+  ) {
+    return this.ordersService.getMyOrders(userId, query);
+  }
+
+  @Get('my/:id')
+  @HttpCode(200)
+  async getMyOrderById(
+    @Headers('authorization-userid') userId: string,
+    @Param('id', ParseObjectIdPipe) orderId: Types.ObjectId,
+  ) {
+    return this.ordersService.getMyOrderById(userId, orderId.toString());
+  }
+
+  @Put('my/:id')
+  @HttpCode(200)
+  async updateOrder(
+    @Headers('authorization-userid') userId: string,
+    @Param('id', ParseObjectIdPipe) orderId: Types.ObjectId,
+    @Body() dto: UpdateOrdersDto,
+  ) {
+    return this.ordersService.updateOrder(userId, orderId.toString(), dto);
+  }
+
+  @Put('my/:id/status/:status')
+  @HttpCode(200)
+  async updateOrderStatus(
+    @Headers('authorization-userid') userId: string,
+    @Param('id', ParseObjectIdPipe) orderId: Types.ObjectId,
+    @Param('status') statusValue: status,
+  ) {
+    return this.ordersService.updateOrderStatus(
+      userId,
+      orderId.toString(),
+      statusValue,
     );
-    return result;
   }
 
-  /**
-   * Delete by ID
-   *
-   * @param id
-   * @returns
-   */
-  @Delete(':id')
-  // @HttpCode(204)
-  async delete(
-    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
-  ): Promise<any> {
-    const result = await this.orderService.deleteOneHardById(id);
-
-    return result;
-  }
-
-  /**
-   * Paginate
-   *
-   * @param query
-   * @returns
-   */
-  @Get('paginate')
+  @Put('my/:id/cancel')
   @HttpCode(200)
-  async paginate(@ApiQueryParams() query: AqpDto): Promise<any> {
-    return this.orderService.paginate(query);
+  async cancelOrder(
+    @Headers('authorization-userid') userId: string,
+    @Param('id', ParseObjectIdPipe) orderId: Types.ObjectId,
+  ) {
+    return this.ordersService.cancelOrder(userId, orderId.toString());
   }
 
-  /**
-   * Find one by ID
-   *
-   * @param id
-   * @returns
-   */
-  @Get('/one')
+  @Put('my/:id/refund')
   @HttpCode(200)
-  async findOneBy(
-    @ApiQueryParams() { filter, projection }: AqpDto,
-  ): Promise<any> {
-    return this.orderService.findOneBy(filter, {
-      filter,
-      projection,
-    });
+  async requestRefund(
+    @Headers('authorization-userid') userId: string,
+    @Param('id', ParseObjectIdPipe) orderId: Types.ObjectId,
+    @Body('reason') reason: string,
+  ) {
+    return this.ordersService.requestRefund(userId, orderId.toString(), reason);
   }
 
-  /**
-   * Find one by ID
-   *
-   * @param id
-   * @returns
-   */
-  @Get(':id')
+  @Get('my/status-count')
   @HttpCode(200)
-  async findOneById(
-    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
-    @ApiQueryParams('population') populate: AqpDto,
-  ): Promise<any> {
-    const result = await this.orderService.findOneById(id, { populate });
-
-    if (!result) throw new NotFoundException('The item does not exist');
-
-    return result;
+  async getOrderCounts(@Headers('authorization-userid') userId: string) {
+    return this.ordersService.getOrderCounts(userId);
   }
 }

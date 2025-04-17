@@ -114,6 +114,8 @@ export class Order {
 
   @Prop({ type: String, ref: 'OrderItem', required: true })
   shopId: string;
+  refundReason: string;
+  updatedAt: Date;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

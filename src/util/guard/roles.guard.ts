@@ -1,5 +1,6 @@
 import { MethodRouteEnum } from '@enum/method-route.enum';
 import { routerHelper } from '@helper/router.helper';
+
 import GlobalInstanceService from '@lazy-module/global-instance/global-instance.service';
 import {
   CanActivate,
