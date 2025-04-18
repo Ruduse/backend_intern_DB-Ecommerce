@@ -116,6 +116,7 @@ export class Order {
   shopId: string;
   refundReason: string;
   updatedAt: Date;
+  createdAt: Date;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

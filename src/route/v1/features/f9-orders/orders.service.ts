@@ -6,18 +6,21 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
+import OrderItemsRepository from '../f10-order-items/order-items.repository';
 import { CreateOrderDto } from './dto/create-orders.dto';
 import { GetMyOrdersDto } from './dto/get-my-orders.dto';
 import UpdateOrdersDto from './dto/update-orders.dto';
 import { status } from './enums/status';
+import { mapOrderDetailResponse } from './helpers/order.mapper';
 import OrdersRepository from './orders.repository';
 import { Order, OrderDocument } from './schemas/orders.schema';
-
 @Injectable()
 export default class OrdersService extends BaseService<OrderDocument> {
+  [x: string]: any;
   constructor(
     readonly logger: CustomLoggerService,
     readonly ordersRepository: OrdersRepository,
+    private readonly orderItemsRepository: OrderItemsRepository,
   ) {
     super(logger, ordersRepository);
   }
@@ -59,8 +62,21 @@ export default class OrdersService extends BaseService<OrderDocument> {
     return this.ordersRepository.findManyBy(filter);
   }
 
-  // Lấy thông tin đơn hàng cụ thể của người dùng
-  async getMyOrderById(userId: string, orderId: string): Promise<Order> {
+  // Lấy chi tiết đơn hàng cụ thể của người dùng
+  // async getMyOrderById(userId: string, orderId: string): Promise<Order> {
+  //   const order = await this.ordersRepository.findOneBy({
+  //     _id: orderId,
+  //     orderBy: userId,
+  //   });
+
+  //   if (!order) {
+  //     this.logger.warn('Không tìm thấy đơn hàng', { userId, orderId });
+  //     throw new NotFoundException('Không tìm thấy đơn hàng');
+  //   }
+
+  //   return order;
+  // }
+  async getMyOrderById(userId: string, orderId: string) {
     const order = await this.ordersRepository.findOneBy({
       _id: orderId,
       orderBy: userId,
@@ -71,7 +87,20 @@ export default class OrdersService extends BaseService<OrderDocument> {
       throw new NotFoundException('Không tìm thấy đơn hàng');
     }
 
-    return order;
+    // Lấy danh sách sản phẩm trong đơn hàng
+    const orderItems = await this.orderItemsRepository.find({
+      orderId: order._id,
+    });
+
+    if (!Array.isArray(orderItems)) {
+      this.logger.warn('Danh sách sản phẩm không hợp lệ hoặc không tồn tại', {
+        userId,
+        orderId,
+      });
+      throw new NotFoundException('Không tìm thấy sản phẩm trong đơn hàng');
+    }
+
+    return mapOrderDetailResponse(order, userId, orderItems);
   }
 
   // Cập nhật đơn hàng của người dùng

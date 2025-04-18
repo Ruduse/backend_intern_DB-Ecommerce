@@ -15,8 +15,9 @@ import {
 
 @Injectable()
 export default class BaseRepository<T> {
-  private model: PaginateModel<T>;
-
+  // private model: PaginateModel<T>;
+  // Sau:
+  protected readonly model: PaginateModel<T>;
   constructor(model: PaginateModel<T>) {
     this.model = model;
   }

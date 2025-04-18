@@ -11,4 +11,8 @@ export default class OrderItemsRepository extends BaseRepository<OrderItemDocume
   ) {
     super(model);
   }
+
+  async find(filter: any): Promise<OrderItem[]> {
+    return this.model.find(filter).exec(); // Sửa lỗi tại đây
+  }
 }

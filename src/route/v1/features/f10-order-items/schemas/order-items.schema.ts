@@ -1,12 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import mongoose, { Document, Types } from 'mongoose';
 
 export type OrderItemDocument = OrderItem & Document;
 
 @Schema({ timestamps: true, versionKey: false, collection: 'orderitems' })
 export class OrderItem {
-  @Prop({ type: String, ref: 'Order', required: true })
-  orderId: string;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Order', required: true })
+  orderId: Types.ObjectId;
 
   @Prop({ type: String, ref: 'Product', required: true })
   productId: string;
@@ -33,6 +33,7 @@ export class OrderItem {
 
   @Prop({ type: String, ref: 'Shop', required: true })
   shopId: string;
+  productName: any;
 }
 
 export const OrderItemsSchema = SchemaFactory.createForClass(OrderItem);
