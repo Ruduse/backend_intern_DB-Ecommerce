@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import OrderItemsModule from '../f10-order-items/order-items.module';
-import OrderItemsRepository from '../f10-order-items/order-items.repository';
+import ReviewModule from '../f21-review/review.module';
 import ShopModule from '../f3-shop/shop.module';
 import DiscountsModule from '../f6-discounts/discounts.module';
 import ShippingMethodsModule from '../f8-shipping-methods/shipping-methods.module';
@@ -22,6 +22,7 @@ import { Order, OrderSchema } from './schemas/orders.schema';
     DiscountsModule,
     ShippingMethodsModule,
     OrderItemsModule,
+    ReviewModule,
   ],
   controllers: [OrdersController],
   providers: [OrdersService, OrdersRepository],

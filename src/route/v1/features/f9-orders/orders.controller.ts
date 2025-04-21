@@ -13,6 +13,7 @@ import { ApiTags } from '@nestjs/swagger';
 import ParseObjectIdPipe from '@pipe/parse-object-id.pipe';
 import { Types } from 'mongoose';
 
+import { CreateReviewDetailDto } from '../f21-review/dto/create-review-detail.dto';
 import { CreateOrderDto } from './dto/create-orders.dto';
 import { GetMyOrdersDto } from './dto/get-my-orders.dto';
 import UpdateOrdersDto from './dto/update-orders.dto';
@@ -55,6 +56,15 @@ export default class OrdersController {
     @Param('id', ParseObjectIdPipe) orderId: Types.ObjectId,
   ) {
     return this.ordersService.getMyOrderById(userId, orderId.toString());
+  }
+  @Post('my/:id/review')
+  @HttpCode(201)
+  async createOrderReview(
+    @Headers('authorization-userid') userId: string,
+    @Param('id', ParseObjectIdPipe) orderId: Types.ObjectId,
+    @Body() dto: CreateReviewDetailDto,
+  ) {
+    return this.ordersService.createReview(userId, orderId.toString(), dto);
   }
 
   @Put('my/:id')

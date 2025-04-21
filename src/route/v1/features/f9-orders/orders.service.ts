@@ -7,6 +7,9 @@ import {
 } from '@nestjs/common';
 
 import OrderItemsRepository from '../f10-order-items/order-items.repository';
+
+import { CreateReviewDetailDto } from '../f21-review/dto/create-review-detail.dto';
+import ReviewRepository from '../f21-review/review.repository';
 import { CreateOrderDto } from './dto/create-orders.dto';
 import { GetMyOrdersDto } from './dto/get-my-orders.dto';
 import UpdateOrdersDto from './dto/update-orders.dto';
@@ -21,6 +24,7 @@ export default class OrdersService extends BaseService<OrderDocument> {
     readonly logger: CustomLoggerService,
     readonly ordersRepository: OrdersRepository,
     private readonly orderItemsRepository: OrderItemsRepository,
+    private readonly reviewsRepository: ReviewRepository,
   ) {
     super(logger, ordersRepository);
   }
@@ -39,6 +43,22 @@ export default class OrdersService extends BaseService<OrderDocument> {
 
     return this.ordersRepository.create(newOrder);
   }
+
+  // Tạo nhiều đơn hàng mới
+  // async createOrders(userId: string, dtos: CreateOrderDto[]): Promise<Order[]> {
+  //   this.logger.log('Tạo nhiều đơn hàng mới', { userId, dtos });
+  //   const orders = dtos.map((dto) => {
+  //     return {
+  //       ...dto,
+  //       orderBy: userId,
+  //       status: status.waiting,
+  //       createdAt: new Date(),
+  //       updatedAt: new Date(),
+  //     };
+  //   });
+
+  //   return this.ordersRepository.create(orders);
+  // }
 
   // Lấy tất cả đơn hàng (không phân biệt người dùng)
   async getAllOrders(dto: GetMyOrdersDto): Promise<Order[]> {
@@ -62,20 +82,6 @@ export default class OrdersService extends BaseService<OrderDocument> {
     return this.ordersRepository.findManyBy(filter);
   }
 
-  // Lấy chi tiết đơn hàng cụ thể của người dùng
-  // async getMyOrderById(userId: string, orderId: string): Promise<Order> {
-  //   const order = await this.ordersRepository.findOneBy({
-  //     _id: orderId,
-  //     orderBy: userId,
-  //   });
-
-  //   if (!order) {
-  //     this.logger.warn('Không tìm thấy đơn hàng', { userId, orderId });
-  //     throw new NotFoundException('Không tìm thấy đơn hàng');
-  //   }
-
-  //   return order;
-  // }
   async getMyOrderById(userId: string, orderId: string) {
     const order = await this.ordersRepository.findOneBy({
       _id: orderId,
@@ -198,6 +204,53 @@ export default class OrdersService extends BaseService<OrderDocument> {
     this.logger.log('Yêu cầu hoàn tiền', { orderId, reason });
 
     return this.ordersRepository.updateOneById(orderId, updated);
+  }
+
+// tạo đánh giá đơn hàng sau khi đơn hàng được giao đến
+  async createReview(
+    userId: string,
+    orderId: string,
+    dto: CreateReviewDetailDto,
+  ) {
+    const order = await this.ordersRepository.findOneBy({
+      _id: orderId,
+      orderBy: userId,
+    });
+
+    if (!order) {
+      throw new NotFoundException('Không tìm thấy đơn hàng');
+    }
+
+    if (order.status !== status.success) {
+      throw new ForbiddenException('Chỉ có thể đánh giá đơn hàng đã giao');
+    }
+
+    const orderItem = await this.orderItemsRepository.findOneBy({
+      _id: dto.orderItemId,
+      orderId: order._id,
+    });
+
+    if (!orderItem) {
+      throw new NotFoundException('Không tìm thấy sản phẩm trong đơn hàng');
+    }
+
+    const existingReview = await this.reviewsRepository.findOneBy({
+      userId,
+      orderItemId: dto.orderItemId,
+    });
+
+    if (existingReview) {
+      throw new ForbiddenException('Bạn đã đánh giá sản phẩm này rồi');
+    }
+
+    const reviewData = {
+      ...dto,
+      userId,
+      orderId: order._id,
+      createdAt: new Date(),
+    };
+
+    return this.reviewsRepository.create(reviewData);
   }
 
   // Thống kê số lượng đơn hàng theo trạng thái

@@ -46,4 +46,5 @@ export class CreateReviewDto {
   @IsString()
   @IsOptional()
   replyId?: string;
+  orderItemId: any;
 }
