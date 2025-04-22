@@ -1,5 +1,6 @@
 import { Transform } from 'class-transformer';
 import {
+  IsBoolean,
   IsDate,
   IsMongoId,
   IsNotEmpty,
@@ -47,6 +48,6 @@ export default class CreateBankDto {
   ccv: string;
 
   @IsOptional()
-  @IsString()
-  isStoreBank?: string;
+  @IsBoolean()
+  isStoreBank?: boolean;
 }

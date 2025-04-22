@@ -8,34 +8,12 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { TransactionMethodEnum } from '../enums/transaction-method.enum';
-import { TransactionStatusEnum } from '../enums/transaction-status.enum';
-import { TransactionTypeEnum } from '../enums/transaction-type.enum';
 import { CreateUserBankDto } from './create-user-bank.dto';
-export default class CreateTransactionDto {
-  @IsNotEmpty()
-  @IsString()
-  userFrom: string;
-
-  @IsNotEmpty()
-  @IsString()
-  userTo: string;
-
+export class CreateRechargeDto {
   @IsNotEmpty()
   @IsEnum(TransactionMethodEnum)
   method: TransactionMethodEnum;
-
-  @IsNotEmpty()
-  @IsEnum(TransactionStatusEnum)
-  status: TransactionStatusEnum;
-
-  @IsNotEmpty()
-  @IsEnum(TransactionTypeEnum)
-  transactionType: TransactionTypeEnum;
-
-  @IsNotEmpty()
-  @IsString()
-  title: string;
-
+  // momo, vnpay, tranfer
   @IsNotEmpty()
   @IsNumber()
   money: number;
@@ -51,7 +29,7 @@ export default class CreateTransactionDto {
   @IsNotEmpty()
   @ValidateNested()
   @Type(() => CreateUserBankDto)
-  userBankReceived: CreateUserBankDto;
+  userBank: CreateUserBankDto;
   userBankId: string;
   bankName: string;
   accountName: string;

@@ -1,7 +1,7 @@
+/* eslint-disable prettier/prettier */
 export enum PaymentMethod {
-    COD = 'COD',
-    ATM = 'ATM',
-    MOMO = 'MOMO',
-    CREDIT = 'CREDIT',
-  }
-  
+  cod = 'COD',
+  atm = 'ATM',
+  momo = 'MOMO',
+  credit = 'CREDIT',
+}

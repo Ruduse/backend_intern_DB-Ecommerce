@@ -8,6 +8,7 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   HttpCode,
   Param,
   Post,
@@ -18,8 +19,10 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import ParseObjectIdPipe from '@pipe/parse-object-id.pipe';
 import { Types } from 'mongoose';
+import { CreateRechargeDto } from './dto/create-recharge.dto';
 import CreateTransactionDto from './dto/create-transaction.dto';
 import UpdateTransactionDto from './dto/update-transaction.dto';
+import { TransactionStatusEnum } from './enums/transaction-status.enum';
 import TransactionService from './transaction.service';
 
 @ApiTags('Transactions')
@@ -72,6 +75,45 @@ export default class TransactionController {
    * @param body
    * @returns
    */
+  @Get('MyWallet')
+  @HttpCode(200)
+  async getWalletBalance(
+    @Headers('authorization-userid') userId: string,
+  ): Promise<{ balance: number; currency: string }> {
+    return this.transactionService.getWalletBalance(userId);
+  }
+
+  @Post('recharge')
+  async recharge(
+    @Headers('authorization-userid') userId: string,
+    @Body() dto: CreateRechargeDto,
+  ) {
+    return this.transactionService.createRechargeTransaction(userId, {
+      money: dto.money,
+      content: dto.content,
+      image: dto.image,
+      userBank: {
+        userBankId: dto.userBankId,
+        bankName: dto.bankName,
+        accountName: dto.accountName,
+        accountNumber: dto.accountNumber,
+      },
+    });
+  }
+  @Put(':id/status')
+  async updateStatus(
+    @Param('id') id: string,
+    @Body() dto: { status: TransactionStatusEnum },
+  ) {
+    return this.transactionService.updateTransactionStatus(id, dto.status);
+  }
+  @Get('history')
+  async getHistory(@Headers('authorization-userid') userId: string) {
+    return this.transactionService.findManyBy({
+      $or: [{ userTo: userId }, { userFrom: userId }],
+    });
+  }
+
   @Put(':id')
   @HttpCode(200)
   async update(

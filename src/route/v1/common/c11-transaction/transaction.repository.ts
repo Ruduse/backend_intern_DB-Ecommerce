@@ -24,4 +24,17 @@ export default class TransactionRepository extends BaseRepository<TransactionDoc
   async createMany(item: any[]) {
     return this.transactionModel.create(item);
   }
+  async sumMoney(filter: Record<string, any>): Promise<number> {
+    const result = await this.transactionModel.aggregate([
+      { $match: filter },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: '$money' },
+        },
+      },
+    ]);
+
+    return result[0]?.total || 0;
+  }
 }

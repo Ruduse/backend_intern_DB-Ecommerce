@@ -99,7 +99,6 @@ const routes: Routes = [
       { path: '/shipping-method', module: ShippingMethod },
       { path: '/orders', module: OrdersModule },
       { path: '/order-items', module: OrderItemsModule },
-      { path: '/transaction', module: TransactionModule },
       { path: '/referral', module: ReferralModule },
       { path: '/userAdress', module: UserAdressModule },
       { path: '/bank', module: BankModule },
