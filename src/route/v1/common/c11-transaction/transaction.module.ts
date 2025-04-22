@@ -1,5 +1,6 @@
 import UserModule from '@authorization/a1-user/user.module';
 import NotificationModule from '@common/c12-notification/notification.module';
+import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Transaction, TransactionSchema } from './schemas/transaction.schema';
@@ -15,6 +16,7 @@ import TransactionService from './transaction.service';
         schema: TransactionSchema,
       },
     ]),
+    HttpModule,
     forwardRef(() => UserModule),
     NotificationModule,
   ],

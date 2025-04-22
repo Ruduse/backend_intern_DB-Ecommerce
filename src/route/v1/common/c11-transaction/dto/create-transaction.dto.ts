@@ -51,7 +51,7 @@ export default class CreateTransactionDto {
   @IsNotEmpty()
   @ValidateNested()
   @Type(() => CreateUserBankDto)
-  userBankReceived: CreateUserBankDto;
+  userBank: CreateUserBankDto;
   userBankId: string;
   bankName: string;
   accountName: string;

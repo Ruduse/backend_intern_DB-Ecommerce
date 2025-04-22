@@ -1,7 +1,7 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
 export class CreateUserBankDto {
   @IsNotEmpty()
-  @IsString()
+  @IsMongoId()
   userBankId: string;
 
   @IsNotEmpty()

@@ -22,6 +22,7 @@ import { Types } from 'mongoose';
 import { CreateRechargeDto } from './dto/create-recharge.dto';
 import CreateTransactionDto from './dto/create-transaction.dto';
 import UpdateTransactionDto from './dto/update-transaction.dto';
+import { TransactionMethodEnum } from './enums/transaction-method.enum';
 import { TransactionStatusEnum } from './enums/transaction-status.enum';
 import TransactionService from './transaction.service';
 
@@ -98,6 +99,7 @@ export default class TransactionController {
         accountName: dto.accountName,
         accountNumber: dto.accountNumber,
       },
+      method: TransactionMethodEnum.tranfer,
     });
   }
   @Put(':id/status')

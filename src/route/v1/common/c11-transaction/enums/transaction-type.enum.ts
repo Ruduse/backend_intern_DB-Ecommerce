@@ -1,4 +1,4 @@
 export enum TransactionTypeEnum {
   recharge = 'RECHARGE',
-  withdraw = 'WITHDRAW ',
+  withdraw = 'WITHDRAW',
 }

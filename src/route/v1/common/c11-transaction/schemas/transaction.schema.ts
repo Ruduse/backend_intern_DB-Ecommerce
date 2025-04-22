@@ -54,7 +54,7 @@ export class Transaction {
   readonly content: string;
 
   @Prop({ type: UserBankSchema, default: '' })
-  readonly userBankReceived: UserBank;
+  readonly userBank: UserBank;
 }
 
 export type TransactionDocument = Transaction & Document;
