@@ -1,37 +1,36 @@
-import { Type } from 'class-transformer';
 import {
   IsEnum,
+  IsMongoId,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
-  ValidateNested,
+  ValidateIf,
 } from 'class-validator';
 import { TransactionMethodEnum } from '../enums/transaction-method.enum';
-import { CreateUserBankDto } from './create-user-bank.dto';
+
 export class CreateRechargeDto {
   @IsNotEmpty()
   @IsEnum(TransactionMethodEnum)
   method: TransactionMethodEnum;
-  // momo, vnpay, tranfer
+
   @IsNotEmpty()
   @IsNumber()
   money: number;
 
+  // Chỉ bắt buộc nếu là chuyển khoản ngân hàng
+  @ValidateIf((o) => o.method === TransactionMethodEnum.transfer)
+  @IsNotEmpty()
+  @IsMongoId()
+  userBankId: string;
+
+  @ValidateIf((o) => o.method === TransactionMethodEnum.transfer)
   @IsOptional()
   @IsString()
   image?: string;
 
+  @ValidateIf((o) => o.method === TransactionMethodEnum.transfer)
   @IsOptional()
   @IsString()
   content?: string;
-
-  @IsNotEmpty()
-  @ValidateNested()
-  @Type(() => CreateUserBankDto)
-  userBank: CreateUserBankDto;
-  userBankId: string;
-  bankName: string;
-  accountName: string;
-  accountNumber: string;
 }

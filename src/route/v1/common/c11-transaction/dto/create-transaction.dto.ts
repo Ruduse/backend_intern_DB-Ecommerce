@@ -16,9 +16,9 @@ export default class CreateTransactionDto {
   @IsString()
   userFrom: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  userTo: string;
+  userTo?: string;
 
   @IsNotEmpty()
   @IsEnum(TransactionMethodEnum)

@@ -6,6 +6,7 @@ import { HttpService } from '@nestjs/axios'; // Thêm thư viện để gọi AP
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { lastValueFrom } from 'rxjs';
+import { ConfirmBankTransferDto } from './dto/confirm-bank-transfer.dto';
 import { TransactionMethodEnum } from './enums/transaction-method.enum';
 import { TransactionStatusEnum } from './enums/transaction-status.enum';
 import { TransactionTypeEnum } from './enums/transaction-type.enum';
@@ -90,6 +91,8 @@ export default class TransactionService extends BaseService<TransactionDocument>
 
     return created;
   }
+
+  //xem tiền trong ví
   async getWalletBalance(
     userId: string,
   ): Promise<{ balance: number; currency: string }> {
@@ -110,83 +113,48 @@ export default class TransactionService extends BaseService<TransactionDocument>
     return { balance, currency };
   }
 
-  async updateTransactionStatus(id: string, status: TransactionStatusEnum) {
-    return this.transactionRepository.updateOneById(id, { status });
-  }
-
-  /**
-   * Tạo giao dịch nạp tiền với phương thức thanh toán online
-   * @param userId
-   * @param data
-   */
-  async createOnlineRechargeTransaction(
+  //Nap tiền vào ví, cách thức chuyển khoan
+  async initiateTopup(
+    { amount, method }: { amount: number; method: string },
     userId: string,
-    data: {
-      money: number;
-      method: TransactionMethodEnum;
-      userBank?: {
-        userBankId: string;
-        bankName: string;
-        accountName: string;
-        accountNumber: string;
-      };
-    },
   ) {
-    const transaction: {
-      userTo: Types.ObjectId;
-      type: TransactionTypeEnum;
-      method: TransactionMethodEnum;
-      status: TransactionStatusEnum;
-      money: number;
-      content: string;
-      image: string;
-      userBank?: {
-        userBankId: string;
-        bankName: string;
-        accountName: string;
-        accountNumber: string;
-      };
-    } = {
-      userTo: new Types.ObjectId(userId),
-      type: TransactionTypeEnum.recharge,
-      method: data.method,
-      status: TransactionStatusEnum.pending, // Trạng thái đang chờ thanh toán
-      money: data.money,
-      content: 'Recharge via ' + data.method,
-      image: '',
-    };
-
-    const createdTransaction = await this.transactionRepository.create(
-      transaction,
-    );
-
-    // Tạo yêu cầu thanh toán từ Momo hoặc VNPAY
-    let paymentUrl: string = '';
-    if (data.method === TransactionMethodEnum.momo) {
-      paymentUrl = await this.createMomoPaymentUrl(data.money); // Gọi Momo API
-    } else if (data.method === TransactionMethodEnum.vnpay) {
-      paymentUrl = await this.createVnpayPaymentUrl(data.money); // Gọi VNPAY API
+    if (amount <= 0) {
+      throw new Error('Amount must be greater than zero');
     }
 
-    // Lưu URL thanh toán vào transaction (hoặc trả về cho client)
-    await this.transactionRepository.updateOneById(createdTransaction._id, {
-      paymentUrl,
-    });
+    if (method === TransactionMethodEnum.transfer) {
+      const content = `${userId}-${amount}`;
+      return {
+        method: TransactionMethodEnum.transfer,
+        bankInfo: {
+          bankName: 'Vietcombank',
+          accountNumber: '1012324567',
+          accountName: 'Izi Software',
+          transferContent: content,
+        },
+      };
+    }
 
-    return {
-      transactionId: createdTransaction._id,
-      paymentUrl,
-    };
+    if (method === TransactionMethodEnum.vnpay) {
+      const payUrl = await this.createVnpayPaymentUrl(userId, amount);
+      return { method: TransactionMethodEnum.vnpay, payUrl };
+    }
+
+    if (method === TransactionMethodEnum.momo) {
+      const payUrl = await this.createMomoPaymentUrl(userId, amount);
+      return { method: TransactionMethodEnum.momo, payUrl };
+    }
+
+    throw new Error('Unsupported payment method');
   }
 
-  /**
-   * Gọi API Momo để tạo URL thanh toán
-   * @param amount
-   * @returns
-   */
-  private async createMomoPaymentUrl(amount: number): Promise<string> {
+  private async createMomoPaymentUrl(
+    userId: string,
+    amount: number,
+  ): Promise<string> {
     const momoApiUrl = 'https://api.momo.vn/transaction/create';
     const requestData = {
+      userId,
       amount,
       // Thêm các tham số cần thiết cho Momo API
     };
@@ -195,21 +163,20 @@ export default class TransactionService extends BaseService<TransactionDocument>
       const response = await lastValueFrom(
         this.httpService.post(momoApiUrl, requestData),
       );
-      return response.data.paymentUrl; // Giả sử API trả về paymentUrl
+      return response.data.paymentUrl;
     } catch (error) {
       this.logger.error('Momo API error: ', error);
       throw new Error('Failed to create Momo payment URL');
     }
   }
 
-  /**
-   * Gọi API VNPAY để tạo URL thanh toán
-   * @param amount
-   * @returns
-   */
-  private async createVnpayPaymentUrl(amount: number): Promise<string> {
+  private async createVnpayPaymentUrl(
+    userId: string,
+    amount: number,
+  ): Promise<string> {
     const vnpayApiUrl = 'https://api.vnpay.vn/transaction/create';
     const requestData = {
+      userId,
       amount,
       // Thêm các tham số cần thiết cho VNPAY API
     };
@@ -218,7 +185,7 @@ export default class TransactionService extends BaseService<TransactionDocument>
       const response = await lastValueFrom(
         this.httpService.post(vnpayApiUrl, requestData),
       );
-      return response.data.paymentUrl; // Giả sử API trả về paymentUrl
+      return response.data.paymentUrl;
     } catch (error) {
       this.logger.error('VNPAY API error: ', error);
       throw new Error('Failed to create VNPAY payment URL');
@@ -230,6 +197,38 @@ export default class TransactionService extends BaseService<TransactionDocument>
    * @param transactionId
    * @param paymentStatus
    */
+  async updateTransactionStatus(id: string, status: TransactionStatusEnum) {
+    return this.transactionRepository.updateOneById(id, { status });
+  }
+
+  async confirmBankTransfer(dto: ConfirmBankTransferDto, userId: string) {
+    const { amount, transferContent, transferImageUrl } = dto;
+
+    const now = new Date();
+
+    const topup = await this.transactionRepository.create({
+      userId,
+      amount,
+      method: 'TRANSFER',
+      status: 'PENDING',
+      paymentInfo: {
+        transferContent,
+        transferImageUrl,
+        bankName: 'Vietcombank',
+        accountNumber: '1012324567',
+        accountName: 'Izi Software',
+      },
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    return {
+      message: 'Đã ghi nhận chuyển khoản. Chờ xác minh từ admin.',
+      topupId: topup._id,
+      status: topup.status,
+    };
+  }
+
   async confirmPayment(transactionId: string, paymentStatus: string) {
     if (paymentStatus === 'success') {
       await this.transactionRepository.updateOneById(transactionId, {

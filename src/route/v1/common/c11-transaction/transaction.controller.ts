@@ -19,10 +19,9 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import ParseObjectIdPipe from '@pipe/parse-object-id.pipe';
 import { Types } from 'mongoose';
-import { CreateRechargeDto } from './dto/create-recharge.dto';
+import { ConfirmBankTransferDto } from './dto/confirm-bank-transfer.dto';
 import CreateTransactionDto from './dto/create-transaction.dto';
 import UpdateTransactionDto from './dto/update-transaction.dto';
-import { TransactionMethodEnum } from './enums/transaction-method.enum';
 import { TransactionStatusEnum } from './enums/transaction-status.enum';
 import TransactionService from './transaction.service';
 
@@ -84,23 +83,88 @@ export default class TransactionController {
     return this.transactionService.getWalletBalance(userId);
   }
 
+  // @Post('recharge')
+  // async recharge(
+  //   @Headers('authorization-userid') userId: string,
+  //   @Body() dto: CreateRechargeDto,
+  // ) {
+  //   return this.transactionService.createRechargeTransaction(userId, {
+  //     money: dto.money,
+  //     content: dto.content,
+  //     image: dto.image,
+  //     userBank: {
+  //       userBankId: dto.userBankId,
+  //       bankName: dto.bankName,
+  //       accountName: dto.accountName,
+  //       accountNumber: dto.accountNumber,
+  //     },
+  //     method: TransactionMethodEnum.tranfer,
+  //   });
+  // }
   @Post('recharge')
-  async recharge(
+  async initiateTopup(
+    @Body() body: { amount: number; method: string },
     @Headers('authorization-userid') userId: string,
-    @Body() dto: CreateRechargeDto,
   ) {
-    return this.transactionService.createRechargeTransaction(userId, {
-      money: dto.money,
-      content: dto.content,
-      image: dto.image,
-      userBank: {
-        userBankId: dto.userBankId,
-        bankName: dto.bankName,
-        accountName: dto.accountName,
-        accountNumber: dto.accountNumber,
-      },
-      method: TransactionMethodEnum.tranfer,
-    });
+    return this.transactionService.initiateTopup(body, userId);
+  }
+  @Post('recharge/confirm')
+  async confirmBankTransfer(
+    @Body() dto: ConfirmBankTransferDto, // Lấy dữ liệu từ request body
+    @Headers('authorization-userid') userId: string,
+  ) {
+    const result = await this.transactionService.confirmBankTransfer(
+      dto,
+      userId,
+    );
+    return result;
+  }
+  @Get('vnpay/callback')
+  @HttpCode(200)
+  async vnpayCallback(@Query() query: any) {
+    const transactionId = query.txnRef || query.transactionId;
+    const status = query.responseCode === '00' ? 'success' : 'failed';
+
+    await this.transactionService.confirmPayment(transactionId, status);
+
+    return {
+      message: 'VNPAY callback received',
+      transactionId,
+      status,
+    };
+  }
+
+  /**
+   * Webhook xác nhận thanh toán từ MOMO
+   */
+  @Post('momo/callback')
+  @HttpCode(200)
+  async momoCallback(@Body() body: any) {
+    const transactionId = body.orderId || body.transactionId;
+    const status = body.resultCode === 0 ? 'success' : 'failed';
+
+    await this.transactionService.confirmPayment(transactionId, status);
+
+    return {
+      message: 'MOMO callback received',
+      transactionId,
+      status,
+    };
+  }
+
+  /**
+   * Endpoint dùng để redirect sau khi thanh toán thành công/thất bại
+   */
+  @Get('payment/result')
+  async paymentResult(@Query() query: any) {
+    const transactionId = query.transactionId;
+    const status = query.status;
+
+    return {
+      message: `Thanh toán ${status === 'success' ? 'thành công' : 'thất bại'}`,
+      transactionId,
+      status,
+    };
   }
   @Put(':id/status')
   async updateStatus(

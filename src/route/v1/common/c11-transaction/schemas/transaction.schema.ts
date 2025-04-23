@@ -14,7 +14,7 @@ export class Transaction {
   @Prop({ type: String, ref: 'User' })
   readonly userFrom: string;
 
-  @Prop({ type: String, ref: 'User', required: true })
+  @Prop({ type: String, ref: 'User' })
   readonly userTo: string;
 
   @Prop({
@@ -27,7 +27,7 @@ export class Transaction {
   @Prop({
     type: String,
     enum: TransactionMethodEnum,
-    default: TransactionMethodEnum.tranfer,
+    default: TransactionMethodEnum.transfer,
   })
   readonly method: TransactionMethodEnum;
 

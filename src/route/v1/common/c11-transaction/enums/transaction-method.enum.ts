@@ -1,5 +1,5 @@
 export enum TransactionMethodEnum {
-  tranfer = 'TRANFER',
+  transfer = 'TRANSFER',
   momo = 'MOMO',
   vnpay = 'VN_PAY',
 }
