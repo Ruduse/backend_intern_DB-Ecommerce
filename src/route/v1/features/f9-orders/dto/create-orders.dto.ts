@@ -63,8 +63,8 @@ class ContactDto {
 
 class StatusHistoryDto {
   @IsString()
-  @IsNotEmpty()
-  status: string;
+  @IsOptional()
+  status?: string;
 
   @IsDate()
   @Type(() => Date)
@@ -85,9 +85,9 @@ class StatusHistoryDto {
 }
 
 export class CreateOrderDto {
-  //Không cần validate ở đây vì controller đã lấy từ header
+  // Không cần validate ở đây vì controller đã lấy từ header
   // @IsNotEmpty()
-  // @IsString()
+  // @IsMongoId()
   // orderBy: string;
 
   @IsString()

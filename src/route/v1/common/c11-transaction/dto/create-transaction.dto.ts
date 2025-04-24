@@ -52,8 +52,4 @@ export default class CreateTransactionDto {
   @ValidateNested()
   @Type(() => CreateUserBankDto)
   userBank: CreateUserBankDto;
-  userBankId: string;
-  bankName: string;
-  accountName: string;
-  accountNumber: string;
 }

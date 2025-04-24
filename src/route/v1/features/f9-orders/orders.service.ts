@@ -8,6 +8,8 @@ import {
 
 import OrderItemsRepository from '../f10-order-items/order-items.repository';
 
+import { Types } from 'mongoose';
+
 import { CreateReviewDetailDto } from '../f21-review/dto/create-review-detail.dto';
 import ReviewRepository from '../f21-review/review.repository';
 import { CreateOrderDto } from './dto/create-orders.dto';
@@ -71,7 +73,7 @@ export default class OrdersService extends BaseService<OrderDocument> {
     return this.ordersRepository.findManyBy(filter);
   }
 
-  // Lấy các đơn hàng của người dùng hiện tại
+  // Lấy các đơn hàng của người dùng hiện tại- có thể theo trạng thái
   async getMyOrders(userId: string, dto: GetMyOrdersDto): Promise<Order[]> {
     const filter: any = { orderBy: userId };
 
@@ -81,7 +83,21 @@ export default class OrdersService extends BaseService<OrderDocument> {
 
     return this.ordersRepository.findManyBy(filter);
   }
+  // Lấy các đơn hàng theo trạng thái cụ thể
+  async getByStatus(userId: string, orderStatus: status): Promise<Order[]> {
+    const filter = {
+      orderBy: userId,
+      status: orderStatus,
+    };
 
+    this.logger.log('Lấy đơn hàng theo trạng thái', {
+      userId,
+      status: orderStatus,
+    });
+
+    return this.ordersRepository.findManyBy(filter);
+  }
+  // Lấy đơn hàng của người dùng theo orderId
   async getMyOrderById(userId: string, orderId: string) {
     const order = await this.ordersRepository.findOneBy({
       _id: orderId,
@@ -206,7 +222,7 @@ export default class OrdersService extends BaseService<OrderDocument> {
     return this.ordersRepository.updateOneById(orderId, updated);
   }
 
-// tạo đánh giá đơn hàng sau khi đơn hàng được giao đến
+  // tạo đánh giá đơn hàng sau khi đơn hàng được giao đến
   async createReview(
     userId: string,
     orderId: string,
@@ -254,8 +270,10 @@ export default class OrdersService extends BaseService<OrderDocument> {
   }
 
   // Thống kê số lượng đơn hàng theo trạng thái
-  async getOrderCounts(userId: string): Promise<Record<status, number>> {
-    const counts: Record<status, number> = {
+  async getOrderCounts(
+    userId: Types.ObjectId,
+  ): Promise<Record<status, number>> {
+    const defaultCounts: Record<status, number> = {
       [status.waiting]: 0,
       [status.confirm]: 0,
       [status.delivery]: 0,
@@ -264,15 +282,15 @@ export default class OrdersService extends BaseService<OrderDocument> {
       [status.refund]: 0,
     };
 
-    const aggregationResult = await this.ordersRepository.aggregate([
+    const result = await this.ordersRepository.aggregate([
       { $match: { orderBy: userId } },
       { $group: { _id: '$status', count: { $sum: 1 } } },
     ]);
 
-    aggregationResult.forEach((result: { _id: status; count: number }) => {
-      counts[result._id] = result.count;
-    });
+    for (const { _id, count } of result) {
+      defaultCounts[_id as status] = count;
+    }
 
-    return counts;
+    return defaultCounts;
   }
 }

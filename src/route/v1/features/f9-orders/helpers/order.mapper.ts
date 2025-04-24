@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { OrderItem } from '../../f10-order-items/schemas/order-items.schema';
 import {
   CheckoutDto,

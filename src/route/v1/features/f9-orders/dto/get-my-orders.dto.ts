@@ -1,4 +1,12 @@
-import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import {
+  IsArray,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 import { status } from '../enums/status';
 
 export class GetMyOrdersDto {
@@ -7,8 +15,9 @@ export class GetMyOrdersDto {
   search?: string;
 
   @IsOptional()
-  @IsEnum(status)
-  status?: status;
+  @IsArray()
+  @IsEnum(status, { each: true })
+  status?: status[];
 
   @IsOptional()
   @IsInt()

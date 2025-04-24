@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import mongoose, { Document, Types } from 'mongoose';
 import { PaymentMethod } from '../enums/paymentMethod';
 import { status } from '../enums/status';
 
@@ -7,8 +7,8 @@ export type OrderDocument = Order & Document;
 
 @Schema({ timestamps: true })
 export class Order {
-  @Prop({ type: String, ref: 'User', required: true })
-  orderBy: string;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
+  orderBy: Types.ObjectId;
 
   @Prop({ type: String, ref: 'Customer', required: true })
   customerId: string;

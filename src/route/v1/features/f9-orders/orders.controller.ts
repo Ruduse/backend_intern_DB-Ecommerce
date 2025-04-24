@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -48,7 +49,23 @@ export default class OrdersController {
   ) {
     return this.ordersService.getMyOrders(userId, query);
   }
+  // GET /orders/my?status=waiting
+  // @Get('my')
+  // @HttpCode(200)
+  // async getMyOrders(
+  //   @Headers('authorization-userid') userId: string,
+  //   @Query('status') statusParam?: string | string[],
+  // ) {
+  //   const statuses = Array.isArray(statusParam)
+  //     ? statusParam
+  //     : statusParam
+  //     ? [statusParam]
+  //     : [];
 
+  //   return this.ordersService.getMyOrders(userId, { status: statuses });
+  // }
+
+  //get my order by orderId
   @Get('my/:id')
   @HttpCode(200)
   async getMyOrderById(
@@ -76,7 +93,14 @@ export default class OrdersController {
   ) {
     return this.ordersService.updateOrder(userId, orderId.toString(), dto);
   }
-
+  // @Get('my/status/:status')
+  // @HttpCode(200)
+  // async getOrdersByStatus(
+  //   @Headers('authorization-userid') userId: string,
+  //   @Param('status') orderStatus: status,
+  // ) {
+  //   return this.ordersService.getByStatus(userId, orderStatus);
+  // }
   @Put('my/:id/status/:status')
   @HttpCode(200)
   async updateOrderStatus(
@@ -113,6 +137,10 @@ export default class OrdersController {
   @Get('my/status-count')
   @HttpCode(200)
   async getOrderCounts(@Headers('authorization-userid') userId: string) {
-    return this.ordersService.getOrderCounts(userId);
+    if (!Types.ObjectId.isValid(userId)) {
+      throw new BadRequestException('userId không hợp lệ');
+    }
+    const objectUserId = new Types.ObjectId(userId);
+    return this.ordersService.getOrderCounts(objectUserId);
   }
 }

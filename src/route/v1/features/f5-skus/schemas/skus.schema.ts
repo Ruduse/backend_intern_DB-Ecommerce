@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-@Schema({ timestamps: true, versionKey: false, collection: 'shops' })
+@Schema({ timestamps: true, versionKey: false, collection: 'skus' })
 export class Sku {
   @Prop({ type: String, req: 'Product', required: true, auto: true }) // ObjectId tự động sinh
   productId: string;

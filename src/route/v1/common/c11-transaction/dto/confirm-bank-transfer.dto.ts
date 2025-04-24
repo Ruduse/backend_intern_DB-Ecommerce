@@ -6,24 +6,8 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
+import { CreateUserBankDto } from './create-user-bank.dto';
 
-class UserBankDto {
-  @IsString()
-  @IsNotEmpty()
-  userBankId: string;
-
-  @IsString()
-  @IsNotEmpty()
-  bankName: string;
-
-  @IsString()
-  @IsNotEmpty()
-  accountName: string;
-
-  @IsString()
-  @IsNotEmpty()
-  accountNumber: string;
-}
 
 export class ConfirmBankTransferDto {
   @IsNumber()
@@ -39,7 +23,7 @@ export class ConfirmBankTransferDto {
   transferImageUrl: string;
 
   @ValidateNested()
-  @Type(() => UserBankDto)
+  @Type(() => CreateUserBankDto)
   @IsNotEmpty()
-  userBank?: UserBankDto;
+  userBank: CreateUserBankDto;
 }

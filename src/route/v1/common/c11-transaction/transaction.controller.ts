@@ -110,14 +110,13 @@ export default class TransactionController {
   }
   @Post('recharge/confirm')
   async confirmBankTransfer(
-    @Body() dto: ConfirmBankTransferDto, // Lấy dữ liệu từ request body
+    @Body() dto: ConfirmBankTransferDto,
     @Headers('authorization-userid') userId: string,
   ) {
-    const result = await this.transactionService.confirmBankTransfer(
-      dto,
-      userId,
-    );
-    return result;
+    console.log('===> confirmBankTransfer called');  // Đảm bảo hàm controller chạy
+    console.log('===> DTO:', dto);
+    console.log('===> DTO.userBank:', dto.userBank);
+    return await this.transactionService.confirmBankTransfer(dto, userId);
   }
   @Get('vnpay/callback')
   @HttpCode(200)
