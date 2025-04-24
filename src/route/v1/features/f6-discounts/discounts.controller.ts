@@ -150,4 +150,17 @@ export default class DiscountsController {
 
     return result;
   }
+  @Get()
+  async findAllByUser(@Query('userId') userId: string) {
+    return this.discountsService.findAllByUser(userId);
+  }
+
+  @Put(':id/select')
+
+  async selectVoucher(
+    @Param('id') voucherId: string,
+    @Body('userId') userId: string,
+  ) {
+    return this.discountsService.selectVoucher(voucherId, userId);
+  }
 }

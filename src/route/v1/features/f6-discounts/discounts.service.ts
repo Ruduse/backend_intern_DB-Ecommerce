@@ -1,7 +1,11 @@
 import BaseService from '@base-inherit/base.service';
 import NotificationService from '@common/c12-notification/notification.service';
 import CustomLoggerService from '@lazy-module/logger/logger.service';
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import DiscountsRepository from './discounts.repository';
 import { CreateDiscountDto } from './dto/create-discounts.dto';
 import { Discount, DiscountDocument } from './schemas/discounts.schema';
@@ -51,5 +55,34 @@ export default class DiscountsService extends BaseService<DiscountDocument> {
       message: `Discount mới đã có sẵn: ${discount.code}. Sử dụng nó ngay!`,
       discountCode: discount.code,
     });
+  }
+  async findAllByUser(userId: string) {
+    return this.discountRepository.findManyBy({ user: userId });
+  }
+
+  async selectVoucher(voucherId: string, userId: string) {
+    // Kiểm tra hợp lệ và chưa hết hạn
+    const voucher = await this.discountRepository.findOneBy({
+      _id: voucherId,
+      user: userId,
+    });
+    if (!voucher)
+      throw new NotFoundException(
+        'Voucher không tồn tại hoặc không thuộc về bạn',
+      );
+    if (voucher.validTo < new Date())
+      throw new BadRequestException('Voucher đã hết hạn');
+
+    // Bỏ chọn các voucher khác
+    await this.discountRepository.updateManyBy(
+      { user: userId },
+      { $set: { isUsed: false } },
+    );
+
+    // Đánh dấu voucher này là đã chọn
+    voucher.isUsed = true;
+    await voucher.save();
+
+    return { message: 'Đã chọn voucher thành công', voucher };
   }
 }
