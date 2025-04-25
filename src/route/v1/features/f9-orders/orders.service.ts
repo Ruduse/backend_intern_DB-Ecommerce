@@ -8,8 +8,6 @@ import {
 
 import OrderItemsRepository from '../f10-order-items/order-items.repository';
 
-import { Types } from 'mongoose';
-
 import { CreateReviewDetailDto } from '../f21-review/dto/create-review-detail.dto';
 import ReviewRepository from '../f21-review/review.repository';
 import { CreateOrderDto } from './dto/create-orders.dto';
@@ -46,23 +44,23 @@ export default class OrdersService extends BaseService<OrderDocument> {
     return this.ordersRepository.create(newOrder);
   }
 
-  // Tạo nhiều đơn hàng mới
-  // async createOrders(userId: string, dtos: CreateOrderDto[]): Promise<Order[]> {
-  //   this.logger.log('Tạo nhiều đơn hàng mới', { userId, dtos });
-  //   const orders = dtos.map((dto) => {
-  //     return {
-  //       ...dto,
-  //       orderBy: userId,
-  //       status: status.waiting,
-  //       createdAt: new Date(),
-  //       updatedAt: new Date(),
-  //     };
-  //   });
+  // Đếm số lượng đơn hàng theo trạng thái
+  async countOrdersByStatus(userId: string) {
+    const statuses = Object.values(status);
 
-  //   return this.ordersRepository.create(orders);
-  // }
+    const result = await Promise.all(
+      statuses.map(async (s) => {
+        const count = await this.orderModel.countDocuments({
+          customerId: userId,
+          status: s,
+        });
+        return { status: s, count };
+      }),
+    );
 
-  // Lấy tất cả đơn hàng (không phân biệt người dùng)
+    return result;
+  }
+
   async getAllOrders(dto: GetMyOrdersDto): Promise<Order[]> {
     const filter: any = {};
 
@@ -267,30 +265,5 @@ export default class OrdersService extends BaseService<OrderDocument> {
     };
 
     return this.reviewsRepository.create(reviewData);
-  }
-
-  // Thống kê số lượng đơn hàng theo trạng thái
-  async getOrderCounts(
-    userId: Types.ObjectId,
-  ): Promise<Record<status, number>> {
-    const defaultCounts: Record<status, number> = {
-      [status.waiting]: 0,
-      [status.confirm]: 0,
-      [status.delivery]: 0,
-      [status.success]: 0,
-      [status.cancel]: 0,
-      [status.refund]: 0,
-    };
-
-    const result = await this.ordersRepository.aggregate([
-      { $match: { orderBy: userId } },
-      { $group: { _id: '$status', count: { $sum: 1 } } },
-    ]);
-
-    for (const { _id, count } of result) {
-      defaultCounts[_id as status] = count;
-    }
-
-    return defaultCounts;
   }
 }

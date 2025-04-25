@@ -156,7 +156,6 @@ export default class DiscountsController {
   }
 
   @Put(':id/select')
-
   async selectVoucher(
     @Param('id') voucherId: string,
     @Body('userId') userId: string,

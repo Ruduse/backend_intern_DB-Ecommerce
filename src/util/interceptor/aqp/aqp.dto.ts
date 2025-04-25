@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsArray, IsNumber, IsObject, Max } from 'class-validator';
+import { IsArray, IsEnum, IsNumber, IsObject, Max } from 'class-validator';
+import { status } from 'src/route/v1/features/f9-orders/enums/status';
 
 export default class AqpDto {
   @ApiPropertyOptional({
@@ -44,4 +45,9 @@ export default class AqpDto {
   })
   @IsArray()
   readonly population: any[] = [];
+
+  // add status
+  @ApiPropertyOptional({ enum: status })
+  @IsEnum(status)
+  status: status;
 }

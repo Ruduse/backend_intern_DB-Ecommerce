@@ -1,10 +1,10 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
   Headers,
   HttpCode,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -14,6 +14,8 @@ import { ApiTags } from '@nestjs/swagger';
 import ParseObjectIdPipe from '@pipe/parse-object-id.pipe';
 import { Types } from 'mongoose';
 
+import { ApiQueryParams } from '@decorator/api-query-params.decorator';
+import AqpDto from '@interceptor/aqp/aqp.dto';
 import { CreateReviewDetailDto } from '../f21-review/dto/create-review-detail.dto';
 import { CreateOrderDto } from './dto/create-orders.dto';
 import { GetMyOrdersDto } from './dto/get-my-orders.dto';
@@ -49,21 +51,6 @@ export default class OrdersController {
   ) {
     return this.ordersService.getMyOrders(userId, query);
   }
-  // GET /orders/my?status=waiting
-  // @Get('my')
-  // @HttpCode(200)
-  // async getMyOrders(
-  //   @Headers('authorization-userid') userId: string,
-  //   @Query('status') statusParam?: string | string[],
-  // ) {
-  //   const statuses = Array.isArray(statusParam)
-  //     ? statusParam
-  //     : statusParam
-  //     ? [statusParam]
-  //     : [];
-
-  //   return this.ordersService.getMyOrders(userId, { status: statuses });
-  // }
 
   //get my order by orderId
   @Get('my/:id')
@@ -133,14 +120,71 @@ export default class OrdersController {
   ) {
     return this.ordersService.requestRefund(userId, orderId.toString(), reason);
   }
-
-  @Get('my/status-count')
+  /**
+   * Paginate
+   *
+   * @param query
+   * @returns
+   */
+  @Get('paginate')
   @HttpCode(200)
-  async getOrderCounts(@Headers('authorization-userid') userId: string) {
-    if (!Types.ObjectId.isValid(userId)) {
-      throw new BadRequestException('userId không hợp lệ');
+  async paginate(
+    @Headers('authorization-userid') userId: string,
+    @ApiQueryParams() query: AqpDto,
+  ): Promise<any> {
+    query.filter = {
+      ...query.filter,
+      customerId: userId,
+    };
+
+    if (query.status) {
+      query.filter.status = query.status;
     }
-    const objectUserId = new Types.ObjectId(userId);
-    return this.ordersService.getOrderCounts(objectUserId);
+
+    const [data, counts] = await Promise.all([
+      this.ordersService.paginate(query),
+      this.ordersService.countOrdersByStatus(userId),
+    ]);
+
+    return {
+      data,
+      counts, // trả về tổng số đơn theo từng status
+    };
+  }
+
+  /**
+   * Find one by ID
+   *
+   * @param id
+   * @returns
+   */
+  @Get('/one')
+  @HttpCode(200)
+  async findOneBy(
+    @ApiQueryParams() { filter, projection }: AqpDto,
+  ): Promise<any> {
+    return this.ordersService.findOneBy(filter, {
+      filter,
+      projection,
+    });
+  }
+
+  /**
+   * Find one by ID
+   *
+   * @param id
+   * @returns
+   */
+  @Get(':id')
+  @HttpCode(200)
+  async findOneById(
+    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
+    @ApiQueryParams('population') populate: AqpDto,
+  ): Promise<any> {
+    const result = await this.ordersService.findOneById(id, { populate });
+
+    if (!result) throw new NotFoundException('The item does not exist');
+
+    return result;
   }
 }
