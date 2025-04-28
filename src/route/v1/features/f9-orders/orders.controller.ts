@@ -43,15 +43,6 @@ export default class OrdersController {
     return this.ordersService.getAllOrders(query);
   }
 
-  @Get('my')
-  @HttpCode(200)
-  async getMyOrders(
-    @Headers('authorization-userid') userId: string,
-    @Query() query: GetMyOrdersDto,
-  ) {
-    return this.ordersService.getMyOrders(userId, query);
-  }
-
   //get my order by orderId
   @Get('my/:id')
   @HttpCode(200)
@@ -132,32 +123,21 @@ export default class OrdersController {
     @Headers('authorization-userid') userId: string,
     @ApiQueryParams() query: AqpDto,
   ): Promise<any> {
-    query.filter = {
-      ...query.filter,
-      customerId: userId,
-    };
-
-    if (query.status) {
-      query.filter.status = query.status;
-    }
-
-    const [data, counts] = await Promise.all([
-      this.ordersService.paginate(query),
-      this.ordersService.countOrdersByStatus(userId),
-    ]);
-
-    return {
-      data,
-      counts, // trả về tổng số đơn theo từng status
-    };
+    return this.ordersService.paginate(query, userId);
   }
-
-  /**
-   * Find one by ID
-   *
-   * @param id
-   * @returns
-   */
+  @Get('detail/:id')
+  @HttpCode(200)
+  async getMyOrderDetail(
+    @Headers('authorization-userid') userId: string,
+    @Param('id', ParseObjectIdPipe) orderId: Types.ObjectId,
+    @ApiQueryParams() query: AqpDto,
+  ): Promise<any> {
+    return this.ordersService.getMyOrderDetail(
+      query,
+      userId,
+      orderId.toString(),
+    );
+  }
   @Get('/one')
   @HttpCode(200)
   async findOneBy(

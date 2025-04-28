@@ -8,8 +8,13 @@ import {
 
 import OrderItemsRepository from '../f10-order-items/order-items.repository';
 
+import AqpDto from '@interceptor/aqp/aqp.dto';
 import { CreateReviewDetailDto } from '../f21-review/dto/create-review-detail.dto';
 import ReviewRepository from '../f21-review/review.repository';
+import ProductsRepository from '../f4-products/products.repository';
+import { Product } from '../f4-products/schemas/products.schema';
+import { Sku } from '../f5-skus/schemas/skus.schema';
+import SkuRepository from '../f5-skus/skus.repository';
 import { CreateOrderDto } from './dto/create-orders.dto';
 import { GetMyOrdersDto } from './dto/get-my-orders.dto';
 import UpdateOrdersDto from './dto/update-orders.dto';
@@ -19,12 +24,13 @@ import OrdersRepository from './orders.repository';
 import { Order, OrderDocument } from './schemas/orders.schema';
 @Injectable()
 export default class OrdersService extends BaseService<OrderDocument> {
-  [x: string]: any;
   constructor(
     readonly logger: CustomLoggerService,
     readonly ordersRepository: OrdersRepository,
     private readonly orderItemsRepository: OrderItemsRepository,
     private readonly reviewsRepository: ReviewRepository,
+    private readonly productRepository: ProductsRepository,
+    private readonly skuRepository: SkuRepository, // Đảm bảo đã inject đúng SkuRepository
   ) {
     super(logger, ordersRepository);
   }
@@ -44,23 +50,6 @@ export default class OrdersService extends BaseService<OrderDocument> {
     return this.ordersRepository.create(newOrder);
   }
 
-  // Đếm số lượng đơn hàng theo trạng thái
-  async countOrdersByStatus(userId: string) {
-    const statuses = Object.values(status);
-
-    const result = await Promise.all(
-      statuses.map(async (s) => {
-        const count = await this.orderModel.countDocuments({
-          customerId: userId,
-          status: s,
-        });
-        return { status: s, count };
-      }),
-    );
-
-    return result;
-  }
-
   async getAllOrders(dto: GetMyOrdersDto): Promise<Order[]> {
     const filter: any = {};
 
@@ -71,30 +60,6 @@ export default class OrdersService extends BaseService<OrderDocument> {
     return this.ordersRepository.findManyBy(filter);
   }
 
-  // Lấy các đơn hàng của người dùng hiện tại- có thể theo trạng thái
-  async getMyOrders(userId: string, dto: GetMyOrdersDto): Promise<Order[]> {
-    const filter: any = { orderBy: userId };
-
-    if (Array.isArray(dto.status) && dto.status.length > 0) {
-      filter.status = { $in: dto.status };
-    }
-
-    return this.ordersRepository.findManyBy(filter);
-  }
-  // Lấy các đơn hàng theo trạng thái cụ thể
-  async getByStatus(userId: string, orderStatus: status): Promise<Order[]> {
-    const filter = {
-      orderBy: userId,
-      status: orderStatus,
-    };
-
-    this.logger.log('Lấy đơn hàng theo trạng thái', {
-      userId,
-      status: orderStatus,
-    });
-
-    return this.ordersRepository.findManyBy(filter);
-  }
   // Lấy đơn hàng của người dùng theo orderId
   async getMyOrderById(userId: string, orderId: string) {
     const order = await this.ordersRepository.findOneBy({
@@ -265,5 +230,195 @@ export default class OrdersService extends BaseService<OrderDocument> {
     };
 
     return this.reviewsRepository.create(reviewData);
+  }
+
+  // Lấy danh sách đơn hàng của người dùng với phân trang
+  async paginate(query: AqpDto, userId?: string): Promise<any> {
+    const { filter = {}, page = 1, limit = 10, status } = query;
+
+    filter.orderBy = userId;
+    if (status) {
+      filter.status = status;
+    }
+
+    const skip = (page - 1) * limit;
+    // 1. Lấy danh sách đơn hàng
+    const orders = await this.ordersRepository.findManyBy(filter, {
+      skip,
+      limit,
+    });
+
+    if (!orders.length) {
+      return {
+        // results: [],
+        page,
+        limit,
+        select: ['id', 'orderId', 'status'],
+        message: 'Không tìm thấy đơn hàng nào',
+      };
+    }
+
+    // 2. Lấy tất cả orderId từ orders
+    const orderIds = orders.map((order: OrderDocument) => order._id);
+
+    // 3. Lấy tất cả orderItem thuộc các orderId đó
+    const orderItems = await this.orderItemsRepository.find({
+      orderId: { $in: orderIds },
+    });
+    // .select('orderId productId');
+
+    // 4. Gom các orderItems theo orderId
+    const orderItemsByOrderId = orderItems.reduce((acc, item) => {
+      const orderIdStr = item.orderId.toString();
+      if (!acc[orderIdStr]) {
+        acc[orderIdStr] = [];
+      }
+      acc[orderIdStr].push(item.productId.toString());
+      return acc;
+    }, {} as Record<string, string[]>);
+
+    // 5. Lấy tất cả các productId duy nhất
+    const allProductIds = [
+      ...new Set(orderItems.map((item) => item.productId.toString())),
+    ];
+
+    // 6. Query lấy thông tin tất cả products (chỗ này bạn cần inject ProductRepository)
+    const products = await this.productRepository.findManyBy({
+      _id: { $in: allProductIds },
+    });
+
+    // 7. Lấy tất cả SKU liên quan đến các productId
+    const skus = await this.skuRepository.findManyBy({
+      productId: { $in: allProductIds },
+    });
+    // Map SKU theo productId
+    const skusByProductId = skus.reduce(
+      (acc: Record<string, any>, sku: Sku) => {
+        acc[sku.productId.toString()] = {
+          thumbnail: sku.thumbnail,
+          price: sku.basePrice, // Hoặc dùng trường giá khác như originalPrice
+        };
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
+
+    // Lấy thông tin của products và gắn thông tin SKU vào
+    const productsById = products.reduce(
+      (acc: Record<string, any>, product: Product) => {
+        const sku = skusByProductId[product._id.toString()];
+        acc[product._id.toString()] = {
+          _id: product._id,
+          name: product.name,
+          thumbnail: sku?.thumbnail || '',
+          price: sku?.price || 0,
+        };
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
+    // 8. Map kết quả cuối cùng
+    const results = orders.map((order: OrderDocument) => {
+      const productIds = orderItemsByOrderId[order._id.toString()] || [];
+      const productList = productIds
+        .map((productId) => productsById[productId])
+        .filter(Boolean);
+      // Nếu order là document (có toObject) thì toObject(), còn không thì xài luôn
+      const plainOrder =
+        typeof order.toObject === 'function' ? order.toObject() : order;
+      return {
+        ...plainOrder,
+        products: productList,
+      };
+    });
+
+    return {
+      results,
+      page,
+      limit,
+    };
+  }
+
+  // Api chi tiết đơn hàng của tôi
+  async getMyOrderDetail(query: AqpDto, userId: string, orderId: string) {
+    const order = await this.ordersRepository.findOneBy({
+      _id: orderId,
+      orderBy: userId,
+    });
+
+    if (!order) {
+      throw new NotFoundException('Không tìm thấy đơn hàng');
+    }
+
+    // Lấy tất cả orderItems
+    const orderItems = await this.orderItemsRepository.find({
+      orderId: order._id,
+    });
+
+    if (!Array.isArray(orderItems) || orderItems.length === 0) {
+      throw new NotFoundException('Không tìm thấy sản phẩm trong đơn hàng');
+    }
+
+    const productIds = [
+      ...new Set(orderItems.map((item) => item.productId.toString())),
+    ];
+
+    // Query products
+    const products = await this.productRepository.findManyBy({
+      _id: { $in: productIds },
+    });
+
+    const skus = await this.skuRepository.findManyBy({
+      productId: { $in: productIds },
+    });
+
+    const skusByProductId = skus.reduce(
+      (acc: Record<string, any>, sku: Sku) => {
+        acc[sku.productId.toString()] = sku;
+        return acc;
+      },
+      {} as Record<string, Sku>,
+    );
+
+    const productsById = products.reduce(
+      (acc: Record<string, any>, product: Product) => {
+        acc[product._id.toString()] = product;
+        return acc;
+      },
+      {} as Record<string, Product>,
+    );
+
+    const productList = orderItems.map((item) => {
+      const product = productsById[item.productId.toString()];
+      const sku = skusByProductId[item.productId.toString()];
+      return {
+        // productId: product._id,
+        product: {
+          name: product?.name || '',
+          thumbnail: sku?.thumbnail || '',
+          price: sku?.basePrice || 0,
+          quantity: item.quantity,
+        },
+
+        totalAmount: item.totalAmount,
+      };
+    });
+    //  Thêm tính tổng số lượng sản phẩm
+    const totalProducts = orderItems.reduce(
+      (sum, item) => sum + item.quantity,
+      0,
+    );
+    return {
+      totalProducts,
+      status: order.status,
+      products: productList,
+      totalAmount: order.totalAmount,
+      shippingInfo: order.shippingInfo,
+      note: order.note,
+      orderId: order._id,
+      orderTime: order.createdAt,
+      checkoutTime: order.creatAt,
+      shippingTime: order.createAt,
+    };
   }
 }

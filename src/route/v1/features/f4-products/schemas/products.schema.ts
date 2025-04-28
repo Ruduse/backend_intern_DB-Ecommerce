@@ -76,6 +76,7 @@ export class Product {
 
   @Prop({ type: String })
   idProductBravo: string;
+  _id: any;
 }
 
 export type ProductsDocument = Product & Document;

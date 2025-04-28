@@ -114,9 +114,13 @@ export class Order {
 
   @Prop({ type: String, ref: 'OrderItem', required: true })
   shopId: string;
+
   refundReason: string;
   updatedAt: Date;
   createdAt: Date;
+
+  // @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'OrderItem' }])
+  // orderItems: Types.ObjectId[];
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

@@ -1,5 +1,12 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsArray, IsEnum, IsNumber, IsObject, Max } from 'class-validator';
+import {
+  IsArray,
+  IsEnum,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  Max,
+} from 'class-validator';
 import { status } from 'src/route/v1/features/f9-orders/enums/status';
 
 export default class AqpDto {
@@ -45,9 +52,16 @@ export default class AqpDto {
   })
   @IsArray()
   readonly population: any[] = [];
-
+  // add page
+  @ApiPropertyOptional({
+    type: Number,
+    default: 1,
+  })
+  @IsNumber()
+  readonly page: number = 1;
   // add status
   @ApiPropertyOptional({ enum: status })
-  @IsEnum(status)
-  status: status;
+  @IsOptional()
+  @IsEnum(status, { each: true })
+  status?: status | status[];
 }
