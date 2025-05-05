@@ -4,7 +4,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { PaginateModel } from 'mongoose';
 import { OrderItem, OrderItemDocument } from './schemas/order-items.schema';
 
-
 @Injectable()
 export default class OrderItemsRepository extends BaseRepository<OrderItemDocument> {
   constructor(
@@ -15,5 +14,12 @@ export default class OrderItemsRepository extends BaseRepository<OrderItemDocume
 
   async find(filter: any): Promise<OrderItem[]> {
     return this.model.find(filter).exec();
+  }
+  async findWithPopulate(filter: any) {
+    return this.model
+      .find(filter)
+      .populate({ path: 'productId', select: 'name' })
+      .populate({ path: 'skuId', select: 'thumbnail basePrice' })
+      .exec();
   }
 }

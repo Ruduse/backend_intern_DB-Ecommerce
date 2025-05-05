@@ -1,3 +1,4 @@
+import NotificationModule from '@common/c12-notification/notification.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import OrderItemsModule from '../f10-order-items/order-items.module';
@@ -27,6 +28,7 @@ import { Order, OrderSchema } from './schemas/orders.schema';
     ReviewModule,
     ProductsModule,
     SkusModule,
+    NotificationModule,
   ],
   controllers: [OrdersController],
   providers: [OrdersService, OrdersRepository],

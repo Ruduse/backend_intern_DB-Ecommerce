@@ -9,12 +9,16 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import ParseObjectIdPipe from '@pipe/parse-object-id.pipe';
 import { Types } from 'mongoose';
 
 import { ApiQueryParams } from '@decorator/api-query-params.decorator';
+import { GetCurrentUser } from '@decorator/get-current-user';
+import { RoleEnum, UserRoleEnum } from '@enum/role-user.enum';
+import RolesGuard from '@guard/roles.guard';
 import AqpDto from '@interceptor/aqp/aqp.dto';
 import { CreateReviewDetailDto } from '../f21-review/dto/create-review-detail.dto';
 import { CreateOrderDto } from './dto/create-orders.dto';
@@ -71,35 +75,31 @@ export default class OrdersController {
   ) {
     return this.ordersService.updateOrder(userId, orderId.toString(), dto);
   }
-  // @Get('my/status/:status')
-  // @HttpCode(200)
-  // async getOrdersByStatus(
-  //   @Headers('authorization-userid') userId: string,
-  //   @Param('status') orderStatus: status,
-  // ) {
-  //   return this.ordersService.getByStatus(userId, orderStatus);
-  // }
+  @UseGuards(RolesGuard)
   @Put('my/:id/status/:status')
   @HttpCode(200)
-  async updateOrderStatus(
+  async updateStatus(
     @Headers('authorization-userid') userId: string,
     @Param('id', ParseObjectIdPipe) orderId: Types.ObjectId,
     @Param('status') statusValue: status,
+    @GetCurrentUser() user: { UserRole: UserRoleEnum; role: RoleEnum }, // Lấy user từ decorator
   ) {
-    return this.ordersService.updateOrderStatus(
+    return this.ordersService.updateStatus(
+      user,
       userId,
       orderId.toString(),
       statusValue,
     );
   }
-
+  @UseGuards(RolesGuard)
   @Put('my/:id/cancel')
   @HttpCode(200)
   async cancelOrder(
     @Headers('authorization-userid') userId: string,
     @Param('id', ParseObjectIdPipe) orderId: Types.ObjectId,
+    @GetCurrentUser() user: { UserRole: UserRoleEnum; role: RoleEnum }, // Lấy user từ decorator
   ) {
-    return this.ordersService.cancelOrder(userId, orderId.toString());
+    return this.ordersService.cancelOrder(userId, orderId.toString(), user);
   }
 
   @Put('my/:id/refund')

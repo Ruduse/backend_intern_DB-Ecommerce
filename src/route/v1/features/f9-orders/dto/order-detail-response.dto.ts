@@ -81,6 +81,7 @@ export class ProductDto {
 }
 
 export class OrderDetailResponseDto {
+  [x: string]: any;
   @IsString()
   @IsNotEmpty()
   orderCode: string;
@@ -132,4 +133,11 @@ export class OrderDetailResponseDto {
   @ValidateNested()
   @Type(() => CheckoutDto)
   summary: CheckoutDto;
+  statusHistories: {
+    status: string;
+    changedAt: Date;
+    changedBy: string;
+    changeReason?: string;
+    changeImages?: string[];
+  }[];
 }

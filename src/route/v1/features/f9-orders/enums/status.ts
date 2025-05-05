@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 export enum status {
-  waiting = 'WAITING',
+  waiting = "WAITING",
   confirm = 'CONFIRM',
   delivery = 'DELIVERY',
   success = 'SUCCESS',

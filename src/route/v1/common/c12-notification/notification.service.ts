@@ -276,4 +276,16 @@ export default class NotificationService extends BaseService<NotificationDocumen
 
     return updatedNotification;
   }
+  async sendOrderUpdate(userId: string, message: string) {
+    const notificationItem = {
+      senderId: 'system', // Bạn có thể thay đổi senderId thành một userId hoặc một giá trị thích hợp
+      recipientId: userId, // Gửi thông báo cho user này
+      title: { vi: 'Cập nhật đơn hàng', en: 'Order update' }, // Tạo title cho các ngôn ngữ
+      description: { vi: message, en: message }, // Tạo description cho các ngôn ngữ
+    };
+
+    // Lưu thông báo vào DB
+    await this.notificationRepository.create(notificationItem);
+    console.log(`📢 Notify user ${userId}: ${message}`);
+  }
 }

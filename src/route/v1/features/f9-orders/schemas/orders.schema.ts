@@ -7,6 +7,9 @@ export type OrderDocument = Order & Document;
 
 @Schema({ timestamps: true })
 export class Order {
+  getId() {
+    throw new Error('Method not implemented.');
+  }
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   orderBy: Types.ObjectId;
 
@@ -118,6 +121,7 @@ export class Order {
   refundReason: string;
   updatedAt: Date;
   createdAt: Date;
+  private _id: any;
 
   // @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'OrderItem' }])
   // orderItems: Types.ObjectId[];
