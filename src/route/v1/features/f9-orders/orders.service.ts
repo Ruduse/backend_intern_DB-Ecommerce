@@ -11,6 +11,7 @@ import OrderItemsRepository from '../f10-order-items/order-items.repository';
 import NotificationService from '@common/c12-notification/notification.service';
 import { RoleEnum, UserRoleEnum } from '@enum/role-user.enum';
 import AqpDto from '@interceptor/aqp/aqp.dto';
+import { Types } from 'mongoose';
 import { CreateReviewDetailDto } from '../f21-review/dto/create-review-detail.dto';
 import ReviewRepository from '../f21-review/review.repository';
 import ProductsRepository from '../f4-products/products.repository';
@@ -130,7 +131,7 @@ export default class OrdersService extends BaseService<OrderDocument> {
     }
 
     const isAdmin =
-      user.UserRole === UserRoleEnum.Admin || user.role === RoleEnum.manager; // Kiểm tra nếu là admin
+      user.UserRole === UserRoleEnum.Admin || user.role === RoleEnum.manager;
     const cancelReason = isAdmin
       ? 'Admin hủy đơn hàng'
       : 'Người dùng hủy đơn hàng';
@@ -138,13 +139,13 @@ export default class OrdersService extends BaseService<OrderDocument> {
     const statusHistoryEntry = {
       status: status.cancel,
       changedAt: new Date(),
-      changedBy: isAdmin ? 'Admin' : userId, // Ghi lại ai thay đổi
-      changeReason: cancelReason, // Lý do thay đổi
+      changedBy: isAdmin ? 'Admin' : userId,
+      changeReason: cancelReason,
     };
     const updated = {
       status: status.cancel,
       updatedAt: new Date(),
-      canceledBy: isAdmin ? 'Admin' : userId, // Ghi lại ai hủy
+      canceledBy: isAdmin ? 'Admin' : userId,
       cancelReason,
       canceledAt: new Date(),
       statusHistories: [
@@ -197,12 +198,7 @@ export default class OrdersService extends BaseService<OrderDocument> {
     return this.ordersRepository.updateOneById(orderId, updated);
   }
 
-  // tạo đánh giá đơn hàng sau khi đơn hàng được giao đến
-  async createReview(
-    userId: string,
-    orderId: string,
-    dto: CreateReviewDetailDto,
-  ) {
+  async getReviewFormProducts(userId: string, orderId: string) {
     const order = await this.ordersRepository.findOneBy({
       _id: orderId,
       orderBy: userId,
@@ -216,9 +212,59 @@ export default class OrdersService extends BaseService<OrderDocument> {
       throw new ForbiddenException('Chỉ có thể đánh giá đơn hàng đã giao');
     }
 
+    const orderItems = await this.orderItemsRepository.findManyBy({
+      orderId: order.getId(),
+    });
+
+    if (!Array.isArray(orderItems)) {
+      throw new NotFoundException('Không tìm thấy sản phẩm trong đơn hàng');
+    }
+
+    return Promise.all(
+      orderItems.map(async (item) => {
+        const product = await this.productRepository.findOneBy({
+          _id: item.productId,
+        });
+        const sku = await this.skuRepository.findOneBy({
+          _id: item.skuId,
+        });
+
+        return {
+          productId: item.productId,
+          skuId: item.skuId,
+          quantity: item.quantity,
+          totalAmount: item.totalAmount,
+          productName: product?.name || '',
+          skuName: sku?.skuCode || '',
+          skuAtributes: sku?.attributes || [],
+          productThumbnail: product?.thumbnail || '',
+          thumbnail: sku?.thumbnail || '',
+        };
+      }),
+    );
+  }
+  // tạo đánh giá đơn hàng sau khi đơn hàng được giao đến
+  async createReview(
+    userId: string,
+    orderId: string,
+    dto: CreateReviewDetailDto,
+  ) {
+    const order = await this.ordersRepository.findOneBy({
+      _id: new Types.ObjectId(orderId),
+      orderBy: userId,
+    });
+
+    if (!order) {
+      throw new NotFoundException('Không tìm thấy đơn hàng');
+    }
+
+    if (order.status !== status.success) {
+      throw new ForbiddenException('Chỉ có thể đánh giá đơn hàng đã giao');
+    }
+
     const orderItem = await this.orderItemsRepository.findOneBy({
       _id: dto.orderItemId,
-      orderId: order.getId(), // Use a public getter method to access the ID
+      orderId: order._id,
     });
 
     if (!orderItem) {
@@ -233,15 +279,55 @@ export default class OrdersService extends BaseService<OrderDocument> {
     if (existingReview) {
       throw new ForbiddenException('Bạn đã đánh giá sản phẩm này rồi');
     }
+    //kiểm tra số lượng hình ảnh,video đã sử dụng
+    const imageUsed = existingReview?.images?.length || 0;
+    const videoUsed = existingReview?.video?.length || 0;
+
+    const maxImages = 5;
+    const maxVideos = 1;
+
+    const imagesRemaining = maxImages - imageUsed;
+    const videosRemaining = maxVideos - videoUsed;
+    //kiểm tra số lượng hình ảnh k quá 5
+    if (dto.images && dto.images.length > imagesRemaining) {
+      throw new ForbiddenException(`k được thêm quá ${imagesRemaining}`);
+    }
+    if (dto.video && dto.video.length > videosRemaining) {
+      throw new ForbiddenException(`k được thêm quá ${videosRemaining}`);
+    }
+    const product = await this.productRepository.findOneBy({
+      _id: orderItem.productId,
+    });
+    const sku = await this.skuRepository.findOneBy({
+      _id: orderItem.skuId,
+    });
+    const data = {
+      productName: product?.name || '',
+      skuAttributes: sku?.attributes || [],
+      skuName: sku?.skuCode || '',
+      thumbnail: sku?.thumbnail || '',
+    };
 
     const reviewData = {
       ...dto,
-      userId,
-      orderId: order.getId(),
+      customerId: userId,
+      productId: orderItem.productId,
+      skuId: orderItem.skuId,
+      orderId: order._id,
+      data,
+      rating: dto.rating || 4,
+      images: dto.images || [],
+      imagesRemaining: imagesRemaining,
+      videoRemaining: videosRemaining,
+      video: dto.video || '',
       createdAt: new Date(),
     };
+    const createdReview = await this.reviewsRepository.create(reviewData);
 
-    return this.reviewsRepository.create(reviewData);
+    return {
+      reviewData,
+      saved: createdReview,
+    };
   }
   // Lấy danh sách đơn hàng của người dùng với phân trang
   async paginate(
@@ -263,7 +349,7 @@ export default class OrdersService extends BaseService<OrderDocument> {
     });
     if (!orders.length) return { results: [], page, limit };
 
-    // Với mỗi order, lấy orderItems và ép thành shape:
+    // Với mỗi order, lấy orderItems
     const results = await Promise.all(
       orders.map(async (order: any) => {
         const orderItems = await this.orderItemsRepository.findManyBy({
@@ -295,7 +381,7 @@ export default class OrdersService extends BaseService<OrderDocument> {
     newStatus: status,
     reason?: string,
   ): Promise<Order> {
-    // 1. Lấy order, check quyền (admin hoặc owner)
+    //  Lấy order, check quyền
     const order = await this.ordersRepository.findOneBy({ _id: orderId });
     if (!order) throw new NotFoundException('Không tìm thấy đơn hàng');
 
@@ -306,7 +392,7 @@ export default class OrdersService extends BaseService<OrderDocument> {
       throw new ForbiddenException('Không có quyền cập nhật trạng thái');
     }
 
-    // 2. Tạo history entry
+    // Tạo history entry
     const entry = {
       status: newStatus,
       changedAt: new Date(),
@@ -314,14 +400,14 @@ export default class OrdersService extends BaseService<OrderDocument> {
       changeReason: reason || '',
     };
 
-    // 3. Cập nhật
+    //Cập nhật
     const updated = await this.ordersRepository.updateOneById(orderId, {
       status: newStatus,
       updatedAt: new Date(),
       statusHistories: [...(order.statusHistories || []), entry],
     });
 
-    // 4. Gửi notification
+    // Gửi notification
     const message =
       `Đơn hàng ${order.code} đã chuyển sang trạng thái ${newStatus}` +
       (reason ? ` (Lý do: ${reason})` : '');

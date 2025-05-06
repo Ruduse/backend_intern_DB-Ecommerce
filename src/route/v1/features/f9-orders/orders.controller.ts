@@ -47,7 +47,6 @@ export default class OrdersController {
     return this.ordersService.getAllOrders(query);
   }
 
-  //get my order by orderId
   @Get('my/:id')
   @HttpCode(200)
   async getMyOrderById(

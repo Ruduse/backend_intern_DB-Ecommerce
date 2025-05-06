@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Type } from 'class-transformer';
 import {
   IsArray,
@@ -15,7 +16,7 @@ export class CreateReviewDetailDto {
 
   @IsString()
   @IsNotEmpty()
-  comment: string;
+  content: string;
 
   @IsNumber()
   @IsNotEmpty()
@@ -26,4 +27,8 @@ export class CreateReviewDetailDto {
   @IsString({ each: true }) // mỗi phần tử trong mảng phải là string (link ảnh)
   @Type(() => String)
   images?: string[]; // Danh sách link ảnh người dùng gửi kèm
+
+  @IsOptional()
+  @IsString()
+  video?: string;
 }
