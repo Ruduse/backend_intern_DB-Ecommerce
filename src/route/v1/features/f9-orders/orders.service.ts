@@ -11,8 +11,6 @@ import OrderItemsRepository from '../f10-order-items/order-items.repository';
 import NotificationService from '@common/c12-notification/notification.service';
 import { RoleEnum, UserRoleEnum } from '@enum/role-user.enum';
 import AqpDto from '@interceptor/aqp/aqp.dto';
-import { Types } from 'mongoose';
-import { CreateReviewDetailDto } from '../f21-review/dto/create-review-detail.dto';
 import ReviewRepository from '../f21-review/review.repository';
 import ProductsRepository from '../f4-products/products.repository';
 import { Product } from '../f4-products/schemas/products.schema';
@@ -243,92 +241,7 @@ export default class OrdersService extends BaseService<OrderDocument> {
       }),
     );
   }
-  // tạo đánh giá đơn hàng sau khi đơn hàng được giao đến
-  async createReview(
-    userId: string,
-    orderId: string,
-    dto: CreateReviewDetailDto,
-  ) {
-    const order = await this.ordersRepository.findOneBy({
-      _id: new Types.ObjectId(orderId),
-      orderBy: userId,
-    });
 
-    if (!order) {
-      throw new NotFoundException('Không tìm thấy đơn hàng');
-    }
-
-    if (order.status !== status.success) {
-      throw new ForbiddenException('Chỉ có thể đánh giá đơn hàng đã giao');
-    }
-
-    const orderItem = await this.orderItemsRepository.findOneBy({
-      _id: dto.orderItemId,
-      orderId: order._id,
-    });
-
-    if (!orderItem) {
-      throw new NotFoundException('Không tìm thấy sản phẩm trong đơn hàng');
-    }
-
-    const existingReview = await this.reviewsRepository.findOneBy({
-      userId,
-      orderItemId: dto.orderItemId,
-    });
-
-    if (existingReview) {
-      throw new ForbiddenException('Bạn đã đánh giá sản phẩm này rồi');
-    }
-    //kiểm tra số lượng hình ảnh,video đã sử dụng
-    const imageUsed = existingReview?.images?.length || 0;
-    const videoUsed = existingReview?.video?.length || 0;
-
-    const maxImages = 5;
-    const maxVideos = 1;
-
-    const imagesRemaining = maxImages - imageUsed;
-    const videosRemaining = maxVideos - videoUsed;
-    //kiểm tra số lượng hình ảnh k quá 5
-    if (dto.images && dto.images.length > imagesRemaining) {
-      throw new ForbiddenException(`k được thêm quá ${imagesRemaining}`);
-    }
-    if (dto.video && dto.video.length > videosRemaining) {
-      throw new ForbiddenException(`k được thêm quá ${videosRemaining}`);
-    }
-    const product = await this.productRepository.findOneBy({
-      _id: orderItem.productId,
-    });
-    const sku = await this.skuRepository.findOneBy({
-      _id: orderItem.skuId,
-    });
-    const data = {
-      productName: product?.name || '',
-      skuAttributes: sku?.attributes || [],
-      skuName: sku?.skuCode || '',
-      thumbnail: sku?.thumbnail || '',
-    };
-
-    const reviewData = {
-      ...dto,
-      customerId: userId,
-      productId: orderItem.productId,
-      skuId: orderItem.skuId,
-      orderId: order._id,
-      data,
-      rating: dto.rating || 4,
-      images: dto.images || [],
-      imagesRemaining: imagesRemaining,
-      videoRemaining: videosRemaining,
-      video: dto.video || '',
-      createdAt: new Date(),
-    };
-    const createdReview = await this.reviewsRepository.create(reviewData);
-
-    return {
-      reviewData,
-      saved: createdReview,
-    };
-  }
   // Lấy danh sách đơn hàng của người dùng với phân trang
   async paginate(
     query: AqpDto,

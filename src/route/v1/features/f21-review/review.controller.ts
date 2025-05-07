@@ -6,6 +6,7 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   HttpCode,
   NotFoundException,
   Param,
@@ -17,6 +18,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import ParseObjectIdPipe from '@pipe/parse-object-id.pipe';
 import { Types } from 'mongoose';
+import { CreateReviewDetailDto } from './dto/create-review-detail.dto';
 import { CreateReviewDto } from './dto/create-review.dto';
 import UpdateReviewDto from './dto/update-review.dto';
 import ReviewService from './review.service';
@@ -53,7 +55,15 @@ export default class ReviewController {
 
     return result;
   }
-
+  @Post('many')
+  @HttpCode(201)
+  async createReview(
+    @Headers('authorization-userid') userId: string,
+    // @Param('id', ParseObjectIdPipe) orderId: Types.ObjectId,
+    @Body() dto: CreateReviewDetailDto & { orderId: string },
+  ) {
+    return this.reviewService.createReview(userId, dto.orderId, dto);
+  }
   /**
    * Update by ID
    *

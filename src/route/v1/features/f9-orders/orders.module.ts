@@ -1,5 +1,5 @@
 import NotificationModule from '@common/c12-notification/notification.module';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import OrderItemsModule from '../f10-order-items/order-items.module';
 import ReviewModule from '../f21-review/review.module';
@@ -25,7 +25,7 @@ import { Order, OrderSchema } from './schemas/orders.schema';
     DiscountsModule,
     ShippingMethodsModule,
     OrderItemsModule,
-    ReviewModule,
+    forwardRef(() => ReviewModule),
     ProductsModule,
     SkusModule,
     NotificationModule,

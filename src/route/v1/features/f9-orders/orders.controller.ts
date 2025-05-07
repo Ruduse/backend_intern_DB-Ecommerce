@@ -20,7 +20,7 @@ import { GetCurrentUser } from '@decorator/get-current-user';
 import { RoleEnum, UserRoleEnum } from '@enum/role-user.enum';
 import RolesGuard from '@guard/roles.guard';
 import AqpDto from '@interceptor/aqp/aqp.dto';
-import { CreateReviewDetailDto } from '../f21-review/dto/create-review-detail.dto';
+// import { CreateReviewDetailDto } from '../f21-review/dto/create-review-detail.dto';
 import { CreateOrderDto } from './dto/create-orders.dto';
 import { GetMyOrdersDto } from './dto/get-my-orders.dto';
 import UpdateOrdersDto from './dto/update-orders.dto';
@@ -55,15 +55,15 @@ export default class OrdersController {
   ) {
     return this.ordersService.getMyOrderById(userId, orderId.toString());
   }
-  @Post('my/:id/review')
-  @HttpCode(201)
-  async createOrderReview(
-    @Headers('authorization-userid') userId: string,
-    @Param('id', ParseObjectIdPipe) orderId: Types.ObjectId,
-    @Body() dto: CreateReviewDetailDto,
-  ) {
-    return this.ordersService.createReview(userId, orderId.toString(), dto);
-  }
+  // @Post('my/:id/review')
+  // @HttpCode(201)
+  // async createOrderReview(
+  //   @Headers('authorization-userid') userId: string,
+  //   @Param('id', ParseObjectIdPipe) orderId: Types.ObjectId,
+  //   @Body() dto: CreateReviewDetailDto,
+  // ) {
+  //   return this.ordersService.createReview(userId, orderId.toString(), dto);
+  // }
 
   @Put('my/:id')
   @HttpCode(200)

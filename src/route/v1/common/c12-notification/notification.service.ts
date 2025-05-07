@@ -286,6 +286,6 @@ export default class NotificationService extends BaseService<NotificationDocumen
 
     // Lưu thông báo vào DB
     await this.notificationRepository.create(notificationItem);
-    console.log(`📢 Notify user ${userId}: ${message}`);
+    console.log(` Notify user ${userId}: ${message}`);
   }
 }
